@@ -8,6 +8,7 @@ const prescriptionController = require("./prescription");
 const notificationController = require("./notification");
 const specialtyController = require("./specialty");
 const availabilityController = require("./availability");
+const adminReportController = require("./adminReports");
 
 module.exports = {
     authController,
@@ -19,5 +20,6 @@ module.exports = {
     prescriptionController,
     notificationController,
     specialtyController,
-    availabilityController
+    availabilityController,
+    adminReportController
 };

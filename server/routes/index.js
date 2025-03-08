@@ -11,6 +11,7 @@ const prescriptionRoutes = require("./prescription");
 const notificationRoutes = require("./notification");
 const specialtyRoutes = require("./specialty");
 const availabilityRoutes = require("./availability");
+const adminReportRoutes = require("./adminReports");
 
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
@@ -22,5 +23,6 @@ router.use("/prescriptions", prescriptionRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/specialties", specialtyRoutes);
 router.use("/availability", availabilityRoutes);
+router.use("/admin-reports", adminReportRoutes); 
 
 module.exports = router;
