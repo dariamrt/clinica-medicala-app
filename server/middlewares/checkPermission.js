@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const JWT_SECRET = process.env.JWT;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const checkAuth = async (req, res, next) => {
     try {
@@ -33,4 +33,11 @@ const checkSelfOrAdmin = (req, res, next) => {
     return res.status(403).json({ message: "Access denied!" });
 };
 
-module.exports = { checkAuth, checkPermission, checkSelfOrAdmin };
+const checkSelfOrDoctorOrAdmin = (req, res, next) => {
+    if (req.user.role === "admin" || req.user.role === "doctor" || req.user.id === req.params.id) {
+        return next();
+    }
+    return res.status(403).json({ message: "Access denied!" });
+};
+
+module.exports = { checkAuth, checkPermission, checkSelfOrAdmin, checkSelfOrDoctorOrAdmin };

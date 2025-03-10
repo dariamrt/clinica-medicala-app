@@ -43,12 +43,13 @@ const getPatientMedicalHistory = async (req, res) => {
 
         const history = await MedicalHistory.findAll({
             where: { patient_id: id },
-            attributes: ["id", "diagnosis", "prescription_id", "doctor_id", "record_date", "notes"],
+            attributes: ["id", "diagnosis", "doctor_id", "notes", "createdAt", "updatedAt"],
         });
 
         res.status(200).json(history);
     } catch (error) {
-        res.status(500).json({ message: "Error fetching medical history!" });
+        console.error("Error fetching medical history: ", error);
+        res.status(500).json({ message: "Error fetching medical history!", error: error.message });
     }
 };
 

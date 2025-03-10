@@ -18,22 +18,29 @@ const registerUser = async (req, res) => {
         const token = req.cookies.token;
         let userRole = "patient"; 
 
-        if (token) {
-            try {
-                const decoded = jwt.verify(token, JWT_SECRET);
-                const adminUser = await User.findByPk(decoded.id);
-                
-                if (!adminUser || adminUser.role !== "admin") {
-                    return res.status(403).json({ message: "Only an administrator can set roles!" });
-                }
+        const adminExists = await User.findOne({ where: { role: "admin" } });
 
-                if (role) {
-                    userRole = role;
+        if (!adminExists) {
+            userRole = role === "admin" ? "admin" : "patient";
+        } else {
+            if (token) {
+                try {
+                    const decoded = jwt.verify(token, JWT_SECRET);
+                    const adminUser = await User.findByPk(decoded.id);
+                    
+                    if (!adminUser || adminUser.role !== "admin") {
+                        return res.status(403).json({ message: "Only an administrator can set roles!" });
+                    }
+
+                    if (role) {
+                        userRole = role;
+                    }
+                } catch (error) {
+                    return res.status(403).json({ message: "Invalid or expired token!" });
                 }
-            } catch (error) {
-                return res.status(403).json({ message: "Invalid or expired token!" });
             }
         }
+    
 
         if (!emailRegex.test(email)) {
             return res.status(400).json({ message: "Invalid email format!" });
@@ -66,6 +73,14 @@ const registerUser = async (req, res) => {
             }
         }
 
+        if (role === "doctor" && (!specialty_id || !first_name || !last_name || !phone_number)) {
+            return res.status(400).json({ message: "Invalid doctor data!" });
+        }
+        
+        if (role === "patient" && (!CNP || !gender || !address || !first_name || !last_name || !phone_number)) {
+            return res.status(400).json({ message: "Invalid patient data!" });
+        }
+        
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Email is already in use!" });
@@ -101,7 +116,10 @@ const registerUser = async (req, res) => {
             });
         }
 
-        res.status(201).json({ message: "User registered successfully!", user: newUser });
+        const userWithoutPassword = { ...newUser.toJSON() }; 
+        delete userWithoutPassword.password; // removed password field for safety concerns
+        
+        res.status(201).json({ message: "User registered successfully!", user: userWithoutPassword });
     } catch (error) {
         console.error("Error registering user:", error);
         res.status(500).json({ message: "Error registering user!" });
@@ -120,8 +138,8 @@ const loginUser = async (req, res) => {
 
         const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "24h" });
         res.cookie("token", token, { httpOnly: true, secure: false });
-
-        res.status(200).json({ message: "Login successful!", token, user });
+        
+        res.status(200).json({ message: "Login successful!", token, email });
     } catch (error) {
         console.error("Error logging in:", error);
         res.status(500).json({ message: "Error logging in!" });
