@@ -24,7 +24,8 @@ const getAppointmentById = async (req, res) => {
 
 const bookAppointment = async (req, res) => {
     try {
-        const { availability_id, patient_id, reimbursed_by_CAS } = req.body; 
+        const { availability_id, reimbursed_by_CAS } = req.body; 
+        const patient_id = req.user.id; 
 
         const availability = await Availability.findByPk(availability_id);
 

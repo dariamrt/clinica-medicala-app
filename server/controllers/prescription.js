@@ -1,29 +1,5 @@
 const { Prescription, MedicalHistory } = require("../models");
 
-const createPrescription = async (req, res) => {
-    try {
-        const { medical_history_id, content } = req.body;
-
-        if (!medical_history_id || !content) {
-            return res.status(400).json({ message: "Medical history ID and prescription content are required!" });
-        }
-
-        const medicalHistory = await MedicalHistory.findByPk(medical_history_id);
-        if (!medicalHistory) {
-            return res.status(404).json({ message: "Medical history record not found!" });
-        }
-
-        const newPrescription = await Prescription.create({
-            content,
-            medical_history_id,
-        });
-
-        res.status(201).json({ message: "Prescription successfully added!", prescription: newPrescription });
-    } catch (error) {
-        res.status(500).json({ message: "Error creating prescription!" });
-    }
-};
-
 const getAllPrescriptions = async (req, res) => {
     try {
         const prescriptions = await Prescription.findAll();
@@ -122,10 +98,8 @@ const deletePrescription = async (req, res) => {
 };
 
 module.exports = {
-    createPrescription,
     getAllPrescriptions,
     getPrescriptionById,
-    getPrescriptionsByPatientId,
     updatePrescription,
     deletePrescription,
 };

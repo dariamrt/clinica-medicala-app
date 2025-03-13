@@ -104,16 +104,36 @@ const addMedicalNote = async (req, res) => {
     }
 };
 
+const addPrescription = async (req, res) => {
+    try {
+        const { medical_history_id, content } = req.body;
+
+        if (!medical_history_id || !content) {
+            return res.status(400).json({ message: "Medical history ID and prescription content are required!" });
+        }
+
+        const medicalHistory = await MedicalHistory.findByPk(medical_history_id);
+        if (!medicalHistory) {
+            return res.status(404).json({ message: "Medical history record not found!" });
+        }
+
+        const newPrescription = await Prescription.create({
+            content,
+            medical_history_id,
+        });
+
+        res.status(201).json({ message: "Prescription successfully added!", prescription: newPrescription });
+    } catch (error) {
+        res.status(500).json({ message: "Error creating prescription!" });
+    }
+};
+
 const getPatientAppointments = async (req, res) => {
     try {
         const { id } = req.params;
 
         if (!/^[0-9a-fA-F-]{36}$/.test(id)) {
             return res.status(400).json({ message: "Invalid patient ID format!" });
-        }
-
-        if (req.user.role !== "admin" && req.user.id !== id) {
-            return res.status(403).json({ message: "Access denied!" });
         }
 
         const patient = await Patient.findOne({ where: { user_id: id } });
@@ -124,11 +144,12 @@ const getPatientAppointments = async (req, res) => {
         const appointments = await Appointment.findAll({
             where: { patient_id: id },
             attributes: ["id", "doctor_id", "date", "start_time", "end_time", "status"],
-            include: {
-                model: User,
-                as: "doctor",
-                attributes: ["id", "email"],
-            },
+            include: [
+                {
+                    model: Doctor,
+                    attributes: ["user_id", "first_name", "last_name"], 
+                }
+            ],
         });
 
         res.status(200).json(appointments);
@@ -143,5 +164,6 @@ module.exports = {
     getPatientMedicalHistory, 
     getPatientPrescriptions,
     addMedicalNote,
+    addPrescription,
     getPatientAppointments 
 };

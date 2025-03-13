@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const { connection: db } = require("./models");
+const { connection: db, Availability } = require("./models");
 const routes = require("./routes");
 
 const app = express();

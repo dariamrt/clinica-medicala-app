@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       date: {
-        type: DataTypes.DATE, 
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       start_time: {
@@ -29,5 +29,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     },
+    {
+      indexes: [
+        {
+          unique: true,
+          fields: ["doctor_id", "date", "start_time", "end_time"],
+          name: "unique_availability_per_doctor_per_period",
+        },
+      ]
+    }
   );
 };

@@ -1,4 +1,4 @@
-const { Doctor, Specialty, User, Appointment } = require("../models");
+const { Doctor, Specialty, Patient, Appointment } = require("../models");
 
 const getAllDoctors = async (req, res) => {
     try {
@@ -62,10 +62,6 @@ const getDoctorAppointments = async (req, res) => {
             return res.status(400).json({ message: "Invalid doctor ID format!" });
         }
 
-        if (req.user.role !== "admin" && req.user.id !== id) {
-            return res.status(403).json({ message: "Access denied!" });
-        }
-
         const doctor = await Doctor.findOne({ where: { user_id: id } });
         if (!doctor) {
             return res.status(404).json({ message: "Doctor not found!" });
@@ -74,15 +70,18 @@ const getDoctorAppointments = async (req, res) => {
         const appointments = await Appointment.findAll({
             where: { doctor_id: id },
             attributes: ["id", "patient_id", "date", "start_time", "end_time", "status"],
-            include: {
-                model: User,
-                as: "patient",
-                attributes: ["id", "email"],
-            },
+            include: [
+                {
+                    model: Patient,
+                    as: "Patients_Datum",  
+                    attributes: ["user_id", "first_name", "last_name"], 
+                }
+            ],
         });
 
         res.status(200).json(appointments);
     } catch (error) {
+        console.error("Error fetching doctor's appointments:", error);
         res.status(500).json({ message: "Error fetching doctor's appointments!" });
     }
 };
