@@ -1,21 +1,106 @@
 const { predictNoShow } = require('../utils/noShowPredictor');
-const { Appointment, Availability, MedicalHistory, Doctor, Specialty } = require("../models");
+const { User, Appointment, Availability, MedicalHistory, Doctor, Specialty, AdminReport } = require("../models");
 const { Sequelize } = require("sequelize");
+
+// generate a report and save if needed 
+const saveReport = async (req, res) => {
+    try {
+        const { report_type, content, format = "json" } = req.body;
+
+        const user_id = req.user?.id || req.cookies?.user_id || "system";
+
+        const formattedContent = JSON.stringify(content, (key, value) => {
+            if (value && typeof value === "object" && "_previousDataValues" in value) {
+                return { ...value.dataValues };
+            }
+            return value;
+        });
+
+        const savedReport = await AdminReport.create({
+            report_type,
+            content: formattedContent,
+            created_by_user_id: user_id,
+            format,
+        });
+
+        return res.status(201).json({ message: "Report saved successfully", report: savedReport });
+    } catch (error) {
+        console.error("Error saving report to database:", error);
+        res.status(500).json({ message: "Error saving report!" });
+    }
+};
+
+// get all the stored reports
+const getStoredReports = async (req, res) => {
+    try {
+        const reports = await AdminReport.findAll({
+            include: [{ model: User, attributes: ["email"] }],
+            order: [["createdAt", "DESC"]],
+        });
+
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error("Error fetching reports:", error);
+        res.status(500).json({ message: "Error fetching reports" });
+    }
+};
+
+// get reports by id
+const getReportById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const report = await AdminReport.findByPk(id);
+
+        if (!report) {
+            return res.status(404).json({ message: "Report not found" });
+        }
+
+        res.status(200).json({
+            id: report.id,
+            report_type: report.report_type,
+            content: JSON.parse(report.content),  
+            created_by_user_id: report.created_by_user_id,
+            format: report.format,
+            createdAt: report.createdAt
+        });
+    } catch (error) {
+        console.error("Error fetching report:", error);
+        res.status(500).json({ message: "Error fetching report" });
+    }
+};
+
+// delete report by id
+const deleteReport = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const report = await AdminReport.findByPk(id);
+
+        if (!report) {
+            return res.status(404).json({ message: "Report not found" });
+        }
+
+        await report.destroy();
+        res.status(200).json({ message: "Report deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting report:", error);
+        res.status(500).json({ message: "Error deleting report" });
+    }
+};
 
 // Appointment Cancellation Rate Report
 const getAppointmentCancellationRate = async (req, res) => {
     try {
         const totalAppointments = await Appointment.count();
-        const canceledAppointments = await Appointment.count({ where: { status: "canceled" } });
+        const canceledAppointments = await Appointment.count({ where: { status: "cancelled" } });
 
         const cancellationRate = totalAppointments === 0 
-            ? 0 
-            : ((canceledAppointments / totalAppointments) * 100).toFixed(2);
+            ? "0.00%" 
+            : ((canceledAppointments / totalAppointments) * 100).toFixed(2) + "%";
 
         return res.status(200).json({
             totalAppointments,
             canceledAppointments,
-            cancellationRate: `${cancellationRate}%`
+            cancellationRate
         });
     } catch (error) {
         console.error("Error fetching cancellation rate:", error);
@@ -26,34 +111,53 @@ const getAppointmentCancellationRate = async (req, res) => {
 // Peak Hours for Appointments
 const getPeakAppointmentHours = async (req, res) => {
     try {
-        const peakHours = await Availability.findAll({
-            attributes: [
-                [Sequelize.fn("HOUR", Sequelize.col("start_time")), "hour"],
-                [Sequelize.fn("COUNT", Sequelize.col("id")), "total_appointments"]
-            ],
-            group: [Sequelize.fn("HOUR", Sequelize.col("start_time"))],
-            order: [[Sequelize.literal("total_appointments"), "DESC"]]
+        const peakHoursData = await Appointment.findAll({
+            attributes: ['start_time', [Sequelize.fn('COUNT', Sequelize.col('start_time')), 'numAppointments']],
+            group: ['start_time'],
+            order: [[Sequelize.fn('COUNT', Sequelize.col('start_time')), 'DESC']],
+            raw: true
         });
+
+        console.log("Debug - Peak Hours Data:", peakHoursData);
+
+        if (peakHoursData.length === 0) {
+            return res.status(200).json({ message: "No peak hours found.", peakHours: [] });
+        }
+
+        const peakHours = peakHoursData.map(entry => ({
+            hour: entry.start_time,
+            count: entry.numAppointments
+        }));
 
         return res.status(200).json({ peakHours });
     } catch (error) {
-        console.error("Error fetching peak hours:", error);
-        res.status(500).json({ message: "Error fetching peak hours!" });
+        console.error("Error fetching peak appointment hours:", error);
+        res.status(500).json({ message: "Error fetching peak appointment hours!" });
     }
 };
 
 // Most Common Diagnoses Report
 const getCommonDiagnoses = async (req, res) => {
     try {
-        const diagnosesReport = await MedicalHistory.findAll({
+        const diagnosesData = await MedicalHistory.findAll({
             attributes: [
-                [Sequelize.fn("JSON_UNQUOTE", Sequelize.fn("JSON_EXTRACT", Sequelize.col("diagnosis"), "$")), "diagnosis"],
-                [Sequelize.fn("COUNT", Sequelize.col("id")), "count"]
+                [Sequelize.col('diagnosis'), 'diagnosis'],
+                [Sequelize.fn('COUNT', Sequelize.col('diagnosis')), 'count']
             ],
-            group: ["diagnosis"],
-            order: [[Sequelize.literal("count"), "DESC"]],
-            limit: 10 // get the most frequent 10 diagnoses
+            where: {
+                diagnosis: { [Sequelize.Op.ne]: null }
+            },
+            group: ['diagnosis'],
+            order: [[Sequelize.fn('COUNT', Sequelize.col('diagnosis')), 'DESC']],
+            raw: true
         });
+
+        console.log("Debug - Diagnoses Data:", diagnosesData);
+
+        const diagnosesReport = diagnosesData.map(entry => ({
+            diagnosis: entry.diagnosis,
+            count: parseInt(entry.count)
+        }));
 
         return res.status(200).json({ diagnosesReport });
     } catch (error) {
@@ -65,117 +169,69 @@ const getCommonDiagnoses = async (req, res) => {
 // Doctor Performance Report
 const getDoctorPerformanceReport = async (req, res) => {
     try {
-        const performanceReport = await Doctor.findAll({
+        const doctorPerformanceData = await Doctor.findAll({
             attributes: [
-                "id",
-                "first_name",
-                "last_name",
-                [Sequelize.fn("COUNT", Sequelize.col("Appointments.id")), "total_appointments"],
-                [Sequelize.fn("AVG", Sequelize.literal("TIMESTAMPDIFF(MINUTE, `Availabilities`.`start_time`, `Availabilities`.`end_time`)")), "avg_duration"]
+                'user_id',
+                'first_name',
+                'last_name',
+                [Sequelize.fn('COUNT', Sequelize.col('Appointments.id')), 'total_appointments'],
+                [Sequelize.fn('IFNULL', Sequelize.literal(
+                    "CASE WHEN COUNT(Appointments.id) > 0 THEN AVG(TIMESTAMPDIFF(MINUTE, Availabilities.start_time, Availabilities.end_time)) ELSE 0 END"
+                ), 0), 'avg_duration'],
+                [Sequelize.fn('IFNULL', Sequelize.col('Appointments.status'), 'No Appointments'), 'appointment_status']
             ],
             include: [
-                { model: Specialty, attributes: ["name"] },
-                { model: Appointment, attributes: [] },
-                { model: Availability, attributes: [] }
+                {
+                    model: Appointment,
+                    attributes: ['id', 'status'],
+                    required: false
+                },
+                {
+                    model: Availability,
+                    attributes: [],
+                    required: false
+                },
+                {
+                    model: Specialty,
+                    attributes: ['id', 'name']
+                }
             ],
-            group: ["Doctor.id"],
-            order: [[Sequelize.literal("total_appointments"), "DESC"]]
+            group: ['user_id', 'Specialty.id'],
+            order: [[Sequelize.literal('total_appointments'), 'DESC']],
+            raw: true
         });
 
-        return res.status(200).json({ performanceReport });
+        const formattedData = doctorPerformanceData.map(doctor => ({
+            user_id: doctor.user_id,
+            first_name: doctor.first_name,
+            last_name: doctor.last_name,
+            total_appointments: doctor.total_appointments,
+            avg_duration: doctor.avg_duration,
+            appointment_status: doctor.appointment_status || "No Appointments",
+            specialty: {
+                id: doctor["Specialty.id"],
+                name: doctor["Specialty.name"]
+            }
+        }));
+
+        console.log("Debug - Formatted Doctor Performance Data:", formattedData);
+
+        return res.status(200).json({ doctorPerformanceReport: formattedData });
     } catch (error) {
         console.error("Error fetching doctor performance report:", error);
         res.status(500).json({ message: "Error fetching doctor performance report!" });
     }
 };
 
-// generate a report and save if needed 
-const generateReport = async (req, res) => {
-    try {
-        const { report_type, save, format } = req.body;
-        let reportData;
-
-        switch (report_type) {
-            case "cancellation-rate":
-                reportData = await getAppointmentCancellationRate();
-                break;
-            case "peak-hours":
-                reportData = await getPeakAppointmentHours();
-                break;
-            case "common-diagnoses":
-                reportData = await getCommonDiagnoses();
-                break;
-            case "doctor-performance":
-                reportData = await getDoctorPerformanceReport();
-                break;
-            default:
-                return res.status(400).json({ message: "Invalid report type" });
-        }
-
-        if (save) {
-            const savedReport = await Admin_Reports.create({
-                report_type,
-                content: reportData,
-                created_by_user_id: req.user.id,
-                format: format || "json",
-            });
-
-            return res.status(201).json({ message: "Report saved successfully", report: savedReport });
-        }
-
-        res.status(200).json({ message: "Report generated", report: reportData });
-    } catch (error) {
-        console.error("Error generating report:", error);
-        res.status(500).json({ message: "Error generating report" });
-    }
-};
-
-// get all the stored reports
-const getStoredReports = async (req, res) => {
-    try {
-        const reports = await Admin_Reports.findAll({
-            include: [{ model: User, attributes: ["email"] }],
-            order: [["generated_at", "DESC"]],
-        });
-
-        res.status(200).json(reports);
-    } catch (error) {
-        console.error("Error fetching reports:", error);
-        res.status(500).json({ message: "Error fetching reports" });
-    }
-};
-
-// download Report as JSON or csv
-const downloadReport = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const report = await Admin_Reports.findByPk(id);
-
-        if (!report) {
-            return res.status(404).json({ message: "Report not found" });
-        }
-
-        if (report.format === "json") {
-            res.setHeader("Content-Disposition", `attachment; filename=report-${id}.json`);
-            res.json(report.content);
-        } else if (report.format === "csv") {
-            const parser = new Parser();
-            const csv = parser.parse(report.content);
-            res.setHeader("Content-Disposition", `attachment; filename=report-${id}.csv`);
-            res.setHeader("Content-Type", "text/csv");
-            res.send(csv);
-        }
-    } catch (error) {
-        console.error("Error downloading report:", error);
-        res.status(500).json({ message: "Error downloading report" });
-    }
-};
-
 // Controller for the AI algorithm
 const predictAppointmentNoShow = async (req, res) => {
     try {
-        const { patientAge, gender, date } = req.body;
-        const risk = await predictNoShow(patientAge, gender, date);
+        const { age, gender, date } = req.body;
+        if (!age || !gender || !date) {
+            return res.status(400).json({ message: "Age, gender, and date are required!" });
+        }
+
+        const risk = await predictNoShow(age, gender, date);
 
         return res.status(200).json({ risk });
     } catch (error) {
@@ -185,9 +241,10 @@ const predictAppointmentNoShow = async (req, res) => {
 };
 
 module.exports = {
-    generateReport, 
+    saveReport, 
     getStoredReports,
-    downloadReport,
+    getReportById,
+    deleteReport,
     getAppointmentCancellationRate,
     getPeakAppointmentHours,
     getCommonDiagnoses,

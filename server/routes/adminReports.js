@@ -7,9 +7,10 @@ router.get("/cancellation-rate", checkAuth, checkPermission(["admin"]), adminRep
 router.get("/peak-hours", checkAuth, checkPermission(["admin"]), adminReportController.getPeakAppointmentHours);
 router.get("/common-diagnoses", checkAuth, checkPermission(["admin"]), adminReportController.getCommonDiagnoses);
 router.get("/doctor-performance", checkAuth, checkPermission(["admin"]), adminReportController.getDoctorPerformanceReport);
-router.post("/generate", checkAuth, checkPermission(["admin"]), adminReportController.generateReport);
+router.post("/save", checkAuth, checkPermission(["admin"]), adminReportController.saveReport);
 router.get("/stored", checkAuth, checkPermission(["admin"]), adminReportController.getStoredReports);
-router.get("/download/:id", checkAuth, checkPermission(["admin"]), adminReportController.downloadReport);
+router.get("/:id", checkAuth, checkPermission(["admin"]), adminReportController.getReportById);
+router.delete("/:id", checkAuth, checkPermission(["admin"]), adminReportController.deleteReport);
 router.post("/predict-no-show", checkAuth, checkPermission(["admin"]), adminReportController.predictAppointmentNoShow);
 
 module.exports = router;
