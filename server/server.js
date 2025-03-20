@@ -1,15 +1,25 @@
 require("dotenv").config();
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const { connection: db, Availability } = require("./models");
+const { connection: db } = require("./models");
 const routes = require("./routes");
+const cors = require("cors");
 
 const app = express();
+
 const PORT = process.env.PORT || 8080;
+
+const corsOptions = {
+    origin: "http://localhost:5173",
+    credentials: true, 
+  };
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(cookieParser());
 app.use(express.json());
+
+
 
 // API Routes
 app.use("/api", routes);

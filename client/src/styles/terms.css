@@ -1,0 +1,47 @@
+.terms-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  padding: 20px;
+}
+
+.terms-card {
+  width: 60%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.terms-card h1, .terms-card h2 {
+  color: #9b59b6;
+}
+
+.terms-card p, .terms-card ul {
+  color: #444;
+  line-height: 1.6;
+}
+
+.terms-card ul {
+  padding-left: 20px;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-link a {
+  text-decoration: none;
+  color: #9b59b6;
+  font-weight: bold;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+  color: #8e44ad;
+}
