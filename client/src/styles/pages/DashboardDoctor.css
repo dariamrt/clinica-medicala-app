@@ -1,0 +1,67 @@
+.doctor-dashboard {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+}
+
+.doctor-dashboard-main {
+  display: flex;
+  height: 100%;
+  padding-top: 100px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  box-sizing: border-box;
+}
+
+.profile-side {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-side {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.welcome-side h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.welcome-side p {
+  font-size: 1.1rem;
+  color: #f2f2f2;
+  margin-bottom: 1.5rem;
+}
+
+.logout-btn {
+  padding: 0.6rem 1.4rem;
+  background-color: white;
+  color: #9b59b6;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #eee;
+}
+
+.highlighted-name {
+  color: #ffd700;
+  font-weight: bold;
+}

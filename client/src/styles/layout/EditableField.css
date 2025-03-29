@@ -1,0 +1,45 @@
+.editable-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  gap: 0.4rem;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #444;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.field-input {
+  padding: 0.65rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: #9b59b6;
+  box-shadow: 0 0 0 4px rgba(155, 89, 182, 0.2);
+}
+
+.field-value {
+  font-size: 1rem;
+  color: #333;
+  background: #f7f7f7;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+}
+
+.field-input.valid {
+  border-color: #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+.field-input.invalid {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}

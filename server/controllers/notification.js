@@ -44,6 +44,20 @@ const getNotificationById = async (req, res) => {
     }
 };
 
+const getNotificationsForCurrentUser = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const notifications = await Notification.findAll({
+        where: { user_id: userId },
+        order: [["createdAt", "DESC"]],
+      });
+  
+      res.status(200).json(notifications);
+    } catch (error) {
+      res.status(500).json({ message: "Eroare la preluarea notificărilor" });
+    }
+};
+
 const createNotification = async (req, res) => {
     try {
         const { user_id, message, is_read } = req.body;
@@ -113,7 +127,7 @@ const deleteNotification = async (req, res) => {
 const send24hReminder = async () => {
     try {
         const now = new Date();
-        const next24h = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Adaugă 24h
+        const next24h = new Date(now.getTime() + 24 * 60 * 60 * 1000); 
 
         const appointments = await Appointment.findAll({
             where: {
@@ -151,6 +165,7 @@ cron.schedule("0 * * * *", send24hReminder, {
 module.exports = {
     getNotificationsByUser,
     getNotificationById,
+    getNotificationsForCurrentUser,
     createNotification,
     markNotificationAsRead,
     deleteNotification,

@@ -1,7 +1,7 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { User, Doctor, Patient } = require("../models");
+const { User, Doctor, Patient, Specialty } = require("../models");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = parseInt(process.env.SALT) || 10;
@@ -117,7 +117,7 @@ const registerUser = async (req, res) => {
         }
 
         const userWithoutPassword = { ...newUser.toJSON() }; 
-        delete userWithoutPassword.password; // removed password field for safety concerns
+        delete userWithoutPassword.password; 
         
         res.status(201).json({ message: "User registered successfully!", user: userWithoutPassword });
     } catch (error) {
@@ -125,7 +125,6 @@ const registerUser = async (req, res) => {
         res.status(500).json({ message: "Error registering user!" });
     }
 };
-
 
 const loginUser = async (req, res) => {
     try {
@@ -153,22 +152,59 @@ const logoutUser = (req, res) => {
 
 const getCurrentUser = async (req, res) => {
     try {
-        const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized user!" });
-        }
-
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const user = await User.findByPk(decoded.id, { attributes: ["id", "email", "role"] });
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found!" });
-        }
-
-        res.status(200).json(user);
+      const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized user!" });
+      }
+  
+      const decoded = jwt.verify(token, JWT_SECRET);
+  
+      const user = await User.findByPk(decoded.id, {
+        attributes: ["id", "email", "role"],
+        include: [
+          {
+            model: Doctor,
+            as: "Doctors_Datum",
+            attributes: ["first_name", "last_name", "phone_number"],
+            include: [
+              {
+                model: Specialty,
+                attributes: ["name"],
+              },
+            ],
+          },
+          {
+            model: Patient,
+            as: "Patients_Datum",
+            attributes: ["first_name", "last_name", "phone_number", "CNP", "gender", "address"],
+          },
+        ],
+      });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found!" });
+      }
+  
+      let userData = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      };
+  
+      if (user.role === "doctor" && user.Doctors_Datum) {
+        userData = {
+          ...userData,
+          ...user.Doctors_Datum.get(),
+          specialty: user.Doctors_Datum.Specialty ? user.Doctors_Datum.Specialty.name : "N/A",
+        };
+      } else if (user.role === "patient" && user.Patients_Datum) {
+        userData = { ...userData, ...user.Patients_Datum.get() };
+      }
+  
+      res.status(200).json(userData);
     } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).json({ message: "Error fetching user!" });
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Error fetching user!" });
     }
 };
 

@@ -4,9 +4,10 @@ const { notificationController } = require("../controllers");
 const { checkAuth, checkPermission, checkSelfOrAdmin } = require("../middlewares/checkPermission");
 
 router.get("/user/:user_id", checkAuth, checkSelfOrAdmin, notificationController.getNotificationsByUser);
-router.get("/:id", checkAuth, checkSelfOrAdmin, notificationController.getNotificationById);
+router.get("/user/:user_id", checkAuth, checkPermission(["admin"]), notificationController.getNotificationsByUser);
 router.post("/", checkAuth, checkPermission(["admin", "doctor"]), notificationController.createNotification);
 router.put("/:id/read", checkAuth, checkSelfOrAdmin, notificationController.markNotificationAsRead);
 router.delete("/:id", checkAuth, checkPermission(["admin"]), notificationController.deleteNotification);
+router.get("/me", checkAuth, notificationController.getNotificationsForCurrentUser);
 
-module.exports = router;
+module.exports = router; 

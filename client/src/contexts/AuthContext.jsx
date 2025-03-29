@@ -8,19 +8,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await getCurrentUser();
-        setUser(userData);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUser();
+    const role = localStorage.getItem("role");
+    if (role === "admin") navigate("/dashboard-admin");
+    if (role === "doctor") navigate("/dashboard-doctor");
+    if (role === "patient") navigate("/dashboard-patient");
   }, []);
+  
 
   const login = async (credentials) => {
     const response = await loginUser(credentials);

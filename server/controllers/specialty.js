@@ -100,7 +100,7 @@ const deleteSpecialty = async (req, res) => {
         await specialty.destroy();
         res.status(200).json({ message: "Specialty successfully deleted!" });
     } catch (error) {
-        console.error("Error deleting specialty:", error);
+       // console.error("Error deleting specialty:", error);
         res.status(500).json({ message: "Error deleting specialty!" });
     }
 };

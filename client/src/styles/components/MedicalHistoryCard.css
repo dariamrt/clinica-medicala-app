@@ -1,0 +1,21 @@
+.medical-history-card {
+  background-color: #f9f9f9;
+  border-left: 6px solid #9b59b6;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.medical-history-card p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+}
+
+.medical-history-card strong {
+  color: #555;
+}
+
+.medical-history-card .small-btn {
+  margin-top: 1rem;
+}

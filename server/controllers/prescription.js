@@ -28,28 +28,6 @@ const getPrescriptionById = async (req, res) => {
     }
 };
 
-const getPrescriptionsByPatientId = async (req, res) => {
-    try {
-        const { patient_id } = req.params;
-
-        if (!/^[0-9a-fA-F-]{36}$/.test(patient_id)) {
-            return res.status(400).json({ message: "Invalid patient ID format!" });
-        }
-
-        const prescriptions = await Prescription.findAll({
-            include: {
-                model: MedicalHistory,
-                where: { patient_id },
-                attributes: ["id", "diagnosis", "doctor_id"],
-            },
-        });
-
-        res.status(200).json(prescriptions);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching patient's prescriptions!" });
-    }
-};
-
 const updatePrescription = async (req, res) => {
     try {
         const { id } = req.params;

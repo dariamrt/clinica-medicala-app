@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginForm from "../components/auth/LoginForm";
-import RegisterForm from "../components/auth/RegisterForm";
-import logo from "../assets/logo.png";
-import "../styles/auth.css";
+import LoginForm from "../../components/auth/LoginForm";
+import RegisterForm from "../../components/auth/RegisterForm";
+import logo from "../../assets/logo.png"
+import "@styles/pages/AuthPage.css";
 
 const AuthPage = () => {
   const [isRegistering, setIsRegistering] = useState(false);

@@ -1,0 +1,25 @@
+.doctor-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+}
+
+.doctor-card:hover {
+  transform: translateY(-5px);
+}
+
+.doctor-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.doctor-specialty,
+.doctor-email,
+.doctor-phone {
+  font-size: 0.95rem;
+  color: #555;
+}

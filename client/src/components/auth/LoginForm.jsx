@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login } from "../../services/AuthService";
+import { AuthService } from "@services";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
@@ -11,15 +11,23 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
-
+  
     try {
-      const data = await login(email, password);
-      localStorage.setItem("token", data.token); // save token
-      navigate("/dashboard"); 
+      const user = await AuthService.login(email, password);
+  
+      if (user.role === "admin") {
+        navigate("/dashboard-admin");
+      } else if (user.role === "doctor") {
+        navigate("/dashboard-doctor");
+      } else {
+        navigate("/dashboard-patient");
+      }
+  
     } catch (err) {
       setError(err.message);
     }
   };
+  
 
   return (
     <form className="auth-form" onSubmit={handleLogin}>

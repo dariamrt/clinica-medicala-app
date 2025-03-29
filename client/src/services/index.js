@@ -1,0 +1,8 @@
+export * as AuthService from "./AuthService";
+export * as DoctorService from "./DoctorService";
+export * as MedicalHistoryService from "./MedicalHistoryService";
+export * as NotificationService from "./NotificationService";
+export * as PatientService from "./PatientService";
+export * as PrescriptionService from "./PrescriptionService";
+export * as SpecialtyService from "./SpecialtyService";
+export * as UserService from "./UserService";

@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/terms.css";
+import "@styles/pages/TermsPage.css";
 
 const TermsAndConditions = () => {
   return (
@@ -52,7 +52,7 @@ const TermsAndConditions = () => {
         </p>
 
         <p className="back-link">
-          <a href="/">Înapoi la pagina principală</a>
+          <Link to="/">Înapoi la pagina principală</Link>
         </p>
       </div>
     </div>

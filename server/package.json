@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "reset": "node populateDatabase.js"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^4.22.0",

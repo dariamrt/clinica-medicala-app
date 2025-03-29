@@ -5,7 +5,7 @@ const { checkAuth, checkPermission, checkSelfOrAdmin } = require("../middlewares
 
 router.get("/", checkAuth, checkPermission(["admin"]), userController.getAllUsers);
 router.get("/:id", checkAuth, checkSelfOrAdmin, userController.getUserById);
-router.put("/:id", checkAuth, checkPermission(["admin"]), userController.updateUser);
+router.put("/:id", checkAuth, checkSelfOrAdmin, userController.updateUser);
 router.delete("/:id", checkAuth, checkPermission(["admin"]), userController.deleteUser);
 
 module.exports = router;

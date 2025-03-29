@@ -1,0 +1,15 @@
+.patient-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1.5fr;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    background: rgba(255, 255, 255, 0.05);
+    color: black;
+    transition: background 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .patient-row:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  

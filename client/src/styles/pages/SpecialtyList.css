@@ -1,0 +1,44 @@
+.specialty-page {
+  padding: 7rem 2rem 4rem;
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to bottom right, #80d0c7, #b084cc);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.specialty-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+.specialty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 1rem;
+}
+
+.back-btn {
+  margin-top: 3rem;
+  padding: 0.6rem 1.4rem;
+  background-color: #9b59b6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #8e44ad;
+}

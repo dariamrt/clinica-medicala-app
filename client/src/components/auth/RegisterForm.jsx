@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { register } from "../../services/AuthService";
+import { AuthService } from "@services";
 import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
@@ -28,7 +28,7 @@ const RegisterForm = () => {
     }
 
     try {
-      await register({
+      await AuthService.register({
         email: userData.email,
         password: userData.password,
         confirmPassword: userData.confirmPassword,

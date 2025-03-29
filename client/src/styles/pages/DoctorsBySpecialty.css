@@ -1,0 +1,55 @@
+.doctors-specialty-page {
+  min-height: 100vh;
+  width: 100vw;
+  padding: 120px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #88c6f0, #a974d1);
+  color: #1f1f1f;
+  box-sizing: border-box;
+}
+
+.doctors-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #1f1f1f;
+}
+
+.loading-msg,
+.no-doctors-msg {
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 40px;
+}
+
+.doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 10px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 40px;
+  background-color: #9b4dc2;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #802fa8;
+}
