@@ -1,0 +1,37 @@
+.medical-page-container {
+    padding: 2rem;
+    min-height: calc(100vh - 80px);
+  }
+  
+  .page-title {
+    margin-top: 10rem;
+    color: #9b59b6;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+  }
+  
+  .medical-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .empty-msg {
+    text-align: center;
+    color: #555;
+    margin-top: 2rem;
+  }
+  
+  .back-btn {
+    margin-top: 2rem;
+    background-color: #9b59b6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  

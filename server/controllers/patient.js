@@ -158,6 +158,61 @@ const getPatientAppointments = async (req, res) => {
     }
 };
 
+const getAppointmentsForCurrentPatient = async (req, res) => {
+    try {
+      const patientId = req.user.id;
+  
+      const appointments = await Appointment.findAll({
+        where: { patient_id: patientId },
+        include: [
+          {
+            model: Doctor,
+            attributes: ["first_name", "last_name"]
+          }
+        ],
+        order: [["date", "DESC"]]
+      });
+  
+      res.status(200).json(appointments);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching patient's appointments!" });
+    }
+  };
+  
+ 
+const getMyMedicalHistory = async (req, res) => {
+    try {
+      const patientId = req.user.id;
+  
+      const history = await MedicalHistory.findAll({
+        where: { patient_id: patientId },
+        attributes: ["id", "diagnosis", "doctor_id", "notes", "createdAt", "updatedAt"],
+      });
+  
+      res.status(200).json(history);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching your medical history." });
+    }
+};
+
+const getMyPrescriptions = async (req, res) => {
+    try {
+      const patientId = req.user.id;
+  
+      const prescriptions = await Prescription.findAll({
+        include: {
+          model: MedicalHistory,
+          where: { patient_id: patientId },
+          attributes: ["id", "diagnosis", "doctor_id"]
+        }
+      });
+  
+      res.status(200).json(prescriptions);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching your prescriptions." });
+    }
+  };
+  
 module.exports = { 
     getAllPatients, 
     getPatientById, 
@@ -165,5 +220,8 @@ module.exports = {
     getPatientPrescriptions,
     addMedicalNote,
     addPrescription,
-    getPatientAppointments 
+    getPatientAppointments,
+    getAppointmentsForCurrentPatient,
+    getMyMedicalHistory,
+    getMyPrescriptions
 };

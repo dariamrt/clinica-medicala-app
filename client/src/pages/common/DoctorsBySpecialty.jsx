@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getDoctorsBySpecialty } from "@services/DoctorService";
-import { DoctorNavbar, DoctorCard, DoctorInfoModal } from "@components";
+import { RoleBasedNavbar, DoctorCard, DoctorInfoModal } from "@components";
 import { ArrowLeft } from "lucide-react";
 import "@styles/pages/DoctorsBySpecialty.css";
 
@@ -42,7 +42,6 @@ const DoctorsBySpecialty = () => {
 
   return (
     <>
-      <DoctorNavbar />
       <div className="doctors-specialty-page">
         <h2 className="doctors-title">Doctori specializați</h2>
 

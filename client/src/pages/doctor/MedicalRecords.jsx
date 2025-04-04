@@ -39,7 +39,6 @@ const MedicalRecords = () => {
 
   return (
     <>
-      <DoctorNavbar />
       <div className="medical-records-container">
         <h2 className="records-title">Fișe medicale pacient</h2>
 

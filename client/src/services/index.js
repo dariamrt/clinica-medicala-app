@@ -6,3 +6,5 @@ export * as PatientService from "./PatientService";
 export * as PrescriptionService from "./PrescriptionService";
 export * as SpecialtyService from "./SpecialtyService";
 export * as UserService from "./UserService";
+export * as AppointmentService from "./AppointmentService";
+export * as AvailabilityService from "./AvailabilityService";

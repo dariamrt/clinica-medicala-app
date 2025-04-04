@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LoginForm from "../../components/auth/LoginForm";
 import RegisterForm from "../../components/auth/RegisterForm";
 import logo from "../../assets/logo.png"
@@ -31,6 +31,13 @@ const AuthPage = () => {
           <div className="form-container">
             <h2>Register</h2>
             <RegisterForm />
+            <p className="gdpr-text">
+              Prin crearea contului sunteți de acord cu{" "}
+              <Link to="/terms">
+                Termenii și Condițiile
+              </Link>{" "}
+              clinicii noastre și cu politica GDPR.
+            </p>
             <p className="auth-switch">
               Already have an account? <button onClick={() => setIsRegistering(false)}>Login here</button>
             </p>

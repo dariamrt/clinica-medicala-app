@@ -6,3 +6,7 @@ export { default as NotificationItem } from "./NotificationItem";
 export { default as PatientCard } from "./PatientCard";
 export { default as UserProfileCard } from "./UserProfileCard";
 export { default as SpecialtyItem } from "./SpecialtyItem"
+export { default as PrescriptionCard } from "./PrescriptionCard";
+export { default as RoleBasedNavbar } from "./RoleBasedNavbar";
+export { default as FaqItem } from "./FaqItem";
+export { default as Footer } from "./Footer";

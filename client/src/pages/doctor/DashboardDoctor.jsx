@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService, UserService } from "@services";
-import { DoctorNavbar, EditableField, UserProfileCard } from "@components";
+import { EditableField, UserProfileCard } from "@components";
 import doctorAvatar from "../../assets/doctor-avatar.png";
-import "@styles/pages/DashboardDoctor.css";
+import "@styles/pages/Dashboard.css"; 
 
 const DashboardDoctor = () => {
   const navigate = useNavigate();
@@ -55,11 +55,9 @@ const DashboardDoctor = () => {
   };
 
   return (
-    <div className="doctor-dashboard">
-      <DoctorNavbar />
-
-      <div className="doctor-dashboard-main">
-        <div className="profile-side">
+    <div className="dashboard-wrapper">
+      <div className="dashboard-content two-column-layout">
+        <div className="left-panel">
           {user && (
             <UserProfileCard>
               <img className="profile-avatar" src={doctorAvatar} alt="Avatar" />
@@ -79,9 +77,7 @@ const DashboardDoctor = () => {
                   }
                 />
               ) : (
-                <p>
-                  <strong>Telefon:</strong> {user.phone_number || "N/A"}
-                </p>
+                <p><strong>Telefon:</strong> {user.phone_number || "N/A"}</p>
               )}
 
               <p><strong>Specialitate:</strong> {user.specialty || "N/A"}</p>
@@ -95,7 +91,7 @@ const DashboardDoctor = () => {
           )}
         </div>
 
-        <div className="welcome-side">
+        <div className="right-panel">
           <h1>
             Bine ai venit, Dr.{" "}
             <span className="highlighted-name">

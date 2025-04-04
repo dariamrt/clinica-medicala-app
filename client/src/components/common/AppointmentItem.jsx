@@ -1,37 +1,27 @@
-import React from "react";
-import "@styles/components/AppointmentItem.css";
+import React, { useEffect, useState } from "react";
+import { AuthService } from "@services";
+import { PatientAppointmentItem, DoctorAppointmentItem } from "@components";
 
-const AppointmentItem = ({ appointment }) => {
-  const patient = appointment.Patients_Datum;
-  const fullName = `${patient?.first_name || "N/A"} ${patient?.last_name || ""}`;
-  const email = patient?.User?.email || "N/A";
+const AppointmentItem = (props) => {
+  const [role, setRole] = useState(null);
 
-  return (
-    <div className="appointment-item">
-      <div className="appointment-row">
-        <span className="label">Nume:</span>
-        <span>{fullName}</span>
-      </div>
-      <div className="appointment-row">
-        <span className="label">Email:</span>
-        <span>{email}</span>
-      </div>
-      <div className="appointment-row">
-        <span className="label">Data:</span>
-        <span>{appointment.date}</span>
-      </div>
-      <div className="appointment-row">
-        <span className="label">Interval:</span>
-        <span>{appointment.start_time} – {appointment.end_time}</span>
-      </div>
-      <div className="appointment-row">
-        <span className="label">Status:</span>
-        <span className={`status ${appointment.status.toLowerCase()}`}>
-          {appointment.status}
-        </span>
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const user = await AuthService.getCurrentUser();
+        setRole(user.role);
+      } catch (error) {
+        console.error("Eroare la determinarea rolului:", error);
+      }
+    };
+    fetchRole();
+  }, []);
+
+  if (!role) return null;
+
+  if (role === "doctor") return <DoctorAppointmentItem appointment={props.appointment} />;
+  if (role === "patient") return <PatientAppointmentItem {...props} />;
+  return null;
 };
 
 export default AppointmentItem;

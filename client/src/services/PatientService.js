@@ -51,3 +51,61 @@ export const addPrescription = async ({ medical_history_id, content }) => {
     throw error;
   }
 };
+
+export const getMyAppointments = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${API_URL}/mine/appointments`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Eroare API: ${errorText}`);
+  }
+
+  return await res.json();
+};
+
+export const getMyMedicalHistory = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${API_URL}/mine/history`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Eroare la preluarea fișelor medicale: ${errorText}`);
+  }
+
+  return await res.json();
+};
+
+export const getMyPrescriptions = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${API_URL}/mine/prescriptions`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Eroare la preluarea rețetelor: ${errorText}`);
+  }
+
+  return await res.json();
+};
+

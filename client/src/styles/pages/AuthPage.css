@@ -1,95 +1,63 @@
-body, html {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #71b7e6, #9b59b6);
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.clinic-logo {
-  width: 150px;
-}
-
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #a1c4fd, #c2e9fb);
+  padding: 2rem;
   overflow: hidden;
+}
+
+.clinic-logo {
+  width: 130px;
+  margin-bottom: 1.5rem;
 }
 
 .auth-card {
   position: relative;
-  width: 400px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 500px;
   height: auto;
-  overflow: hidden;
+  min-height: 500px;
   background: #fff;
   border-radius: 12px;
-  padding: 2rem;
+  padding: 2rem 1.5rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: auto;
+  overflow: hidden;
 }
 
 .form-slider {
   display: flex;
-  width: 200%; 
+  width: 200%;
   transition: transform 0.5s ease-in-out;
-  justify-content: flex-start;
-  align-items: center;
+  gap: 25%;
+}
+
+.login-active .form-slider {
+  transform: translateX(25%);
+}
+
+.register-active .form-slider {
+  transform: translateX(-50%);
 }
 
 .form-container {
   width: 50%;
-  padding: 20px;
   flex-shrink: 0;
-  margin: 0 20px;
-}
-
-.login-active .form-slider {
-  transform: translateX(20%);
-}
-
-.register-active .form-slider {
-  transform: translateX(-40%);
+  padding: 0 10px;
 }
 
 .auth-card h2 {
   text-align: center;
   color: #444;
-  margin-bottom: 0.5rem;
-}
-
-.auth-card select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: #fff;
-  padding: 10px;
-  font-size: 16px;
-  color: #444;
-  cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%239b59b6' d='M5 7l5 5 5-5H5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 14px;
-  padding-right: 35px;
+  margin-bottom: 1rem;
 }
 
 .auth-card input,
 .auth-card select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   background-color: #fff;
   padding: 10px;
   font-size: 14px;
@@ -98,25 +66,14 @@ body, html {
   border: 1px solid #9b59b6;
   border-radius: 8px;
   width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.auth-card input, 
-.auth-card select, 
-.auth-card button {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 0.8rem;
-}
-
-.auth-card input:focus, 
+.auth-card input:focus,
 .auth-card select:focus {
   outline: none;
   border-color: #9b59b6;
-  box-shadow: 0 0 6px rgba(155,89,182,0.5);
+  box-shadow: 0 0 6px rgba(155, 89, 182, 0.5);
 }
 
 .auth-card button {
@@ -128,6 +85,8 @@ body, html {
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 16px;
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
 .auth-card button:hover {
@@ -140,14 +99,8 @@ body, html {
   color: #8e44ad;
 }
 
-.login-active .auth-switch,
-.register-active .auth-switch {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .auth-switch button {
-  background: none; 
+  background: none;
   border: none;
   color: #9b59b6;
   cursor: pointer;
@@ -157,7 +110,6 @@ body, html {
 }
 
 .auth-switch button:hover {
-  background: none !important;  
   color: #8e44ad;
   transform: scale(1.05);
 }
@@ -192,12 +144,46 @@ body, html {
   color: #8e44ad;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .auth-card {
-    width: 90%;
-    padding: 1rem;
+    width: 95%;
+    height: auto;
+    padding: 1.5rem 1rem;
+    overflow: visible;
+    min-height: auto;
   }
+
+  .form-slider {
+    flex-direction: column;
+    width: 100%;
+    transform: translateX(0%) !important;
+  }
+
+  .form-container {
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 0 10px;
+  }
+
   .clinic-logo {
-    width: 70px;
+    width: 80px;
+  }
+
+  .login-active .form-container:nth-child(2),
+  .register-active .form-container:nth-child(1) {
+    display: none;
+  }
+
+  .auth-container {
+    align-items: flex-start;
+    padding-top: 2rem;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+@media (min-width: 768px) {
+  .auth-card {
+    max-width: 500px;
   }
 }

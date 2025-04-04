@@ -1,11 +1,12 @@
 .specialty-page {
-  padding: 7rem 2rem 4rem;
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); 
+  margin-top: 80px; 
+  padding: 2rem;
   width: 100vw;
-  background: linear-gradient(to bottom right, #80d0c7, #b084cc);
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: hidden;
 }
 
 .specialty-title {

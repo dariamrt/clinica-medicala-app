@@ -9,7 +9,9 @@ const checkAuth = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({ message: "Unauthorized! You must be authenticated." });
         }
+
         const decoded = jwt.verify(token, JWT_SECRET);
+        console.log("checkAuth user:", decoded);
         req.user = decoded;
         next();
     } catch (error) {

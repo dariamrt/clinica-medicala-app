@@ -30,7 +30,6 @@ const PatientsList = () => {
 
   return (
     <>
-      <DoctorNavbar />
       <div className="patients-page">
         <h2>Pacienții mei</h2>
         <input

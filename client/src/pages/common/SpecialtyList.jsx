@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SpecialtyService } from "@services";
-import { DoctorNavbar } from "@components";
+import { RoleBasedNavbar } from "@components";
 import { ArrowLeft } from "lucide-react";
 import { SpecialtyItem } from "@components/common";
 import "@styles/pages/SpecialtyList.css";
@@ -24,7 +24,6 @@ const SpecialtyList = () => {
 
   return (
     <>
-      <DoctorNavbar />
       <div className="specialty-page">
         <h2 className="specialty-title">Specializări disponibile</h2>
 

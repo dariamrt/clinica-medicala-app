@@ -3,6 +3,9 @@ const router = express.Router();
 const { patientController } = require("../controllers");
 const { checkAuth, checkPermission, checkSelfOrAdmin, checkSelfOrDoctorOrAdmin } = require("../middlewares/checkPermission");
 
+router.get("/mine/appointments", checkAuth, patientController.getAppointmentsForCurrentPatient);
+router.get("/mine/history", checkAuth, patientController.getMyMedicalHistory);
+router.get("/mine/prescriptions", checkAuth, patientController.getMyPrescriptions);
 router.get("/", checkAuth, checkPermission(["admin", "doctor"]), patientController.getAllPatients);
 router.get("/:id", checkAuth, checkPermission(["admin", "doctor"]), patientController.getPatientById);
 router.get("/:id/medical-history", checkAuth, checkSelfOrDoctorOrAdmin, patientController.getPatientMedicalHistory);

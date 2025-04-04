@@ -1,0 +1,33 @@
+.faq-item {
+    background: #f9f9f9;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .faq-item:hover {
+    background: #f0f0f0;
+  }
+  
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .faq-toggle {
+    font-size: 20px;
+    color: #888;
+  }
+  
+  .faq-answer {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #444;
+  }
+  

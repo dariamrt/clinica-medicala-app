@@ -51,7 +51,6 @@ const PatientDetails = () => {
 
   return (
     <>
-      <DoctorNavbar />
       <div className="patient-details-container">
         <div className="patient-details-header">
           <h2>Detalii pacient</h2>

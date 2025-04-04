@@ -2,7 +2,6 @@
   padding: 2rem;
   padding-top: 140px;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #71b7e6, #9b59b6);
   min-height: 100vh;
   width: 100vw;
   color: white;
@@ -23,11 +22,11 @@
 }
 
 .left-panel {
-  background-color: white;
+  background-color: transparent;
   border-radius: 16px;
   padding: 2rem;
   color: #333;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); */
   flex: 1;
   max-width: 400px;
   min-width: 300px;
@@ -37,11 +36,11 @@
 }
 
 .right-panel {
-  background-color: white;
+  background-color: transparent;
   border-radius: 16px;
   padding: 2rem;
   color: #333;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); */
   flex: 2;
   min-width: 300px;
 }
