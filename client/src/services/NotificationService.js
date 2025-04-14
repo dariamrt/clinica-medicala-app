@@ -23,39 +23,33 @@ export const getMyNotifications = async () => {
 };
 
 export const markAsRead = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}/read`, {
-      method: "PUT",
-      credentials: "include",
-    });
+  const res = await fetch(`${API_URL}/${id}/read`, {
+    method: "PUT",
+    credentials: "include",
+  });
 
-    if (!response.ok) {
-      throw new Error("Eroare la marcare ca citit.");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Eroare la marcare ca citit:", error);
-    throw error;
+  if (!res.ok) {
+    throw new Error("Eroare la marcare ca citit.");
   }
+
+  return await res.json();
 };
 
 export const deleteNotification = async (id) => {
-  try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
 
-    if (!response.ok) {
-      throw new Error("Eroare la ștergerea notificării.");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Eroare la ștergere notificare:", error);
-    throw error;
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Eroare API: ${errorText}`);
   }
+
+  return await res.json();
 };
 
 export const getUnreadCount = async () => {

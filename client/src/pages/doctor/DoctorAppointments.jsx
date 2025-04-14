@@ -32,7 +32,11 @@ const DoctorAppointments = () => {
         ) : (
           <div className="appointments-list">
             {appointments.map((appt) => (
-              <AppointmentItem key={appt.id} appointment={appt} />
+              <AppointmentItem
+                key={appt.id}
+                role="doctor"
+                appointment={appt}
+              />            
             ))}
           </div>
         )}

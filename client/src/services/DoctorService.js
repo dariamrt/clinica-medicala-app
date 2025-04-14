@@ -31,3 +31,22 @@ export const getDoctorAppointments = async (doctorId) => {
     throw error;
   }
 };
+
+export const getMyAppointments = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${API_URL}/mine`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error("Eroare la obținerea programărilor doctorului.");
+  }
+
+  return await res.json();
+};
+
+

@@ -16,11 +16,16 @@ export const bookAppointment = async ({ availability_id, reimbursed_by_CAS }) =>
   return await res.json();
 };
 
-export const getMyAppointments = async () => {
-  const res = await fetch(`${API_URL}/me`, {
-    method: "GET",
+export const cancelAppointment = async (appointmentId) => {
+  const res = await fetch(`${API_URL}/${appointmentId}`, {
+    method: "DELETE",
     credentials: "include",
   });
-  if (!res.ok) throw new Error("Eroare la obținerea programărilor.");
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Eroare la anularea programării!");
+  }
+
   return await res.json();
 };

@@ -113,9 +113,36 @@ const getDoctorAppointments = async (req, res) => {
     }
 };
 
+const getAppointmentsForCurrentDoctor = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+
+    const appointments = await Appointment.findAll({
+      where: { doctor_id: doctorId },
+      include: [
+        {
+          model: Patient,
+          attributes: ["first_name", "last_name"],
+          include: {
+            model: User,
+            attributes: ["email"],
+          }
+        }
+      ],
+      order: [["date", "DESC"]]
+    });
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Doctor appointment error:", error);
+    res.status(500).json({ message: "Error fetching doctor's appointments!" });
+  }
+};
+  
 module.exports = { 
     getAllDoctors, 
     getDoctorById, 
     getDoctorsBySpecialty,
-    getDoctorAppointments 
+    getDoctorAppointments,
+    getAppointmentsForCurrentDoctor 
 };

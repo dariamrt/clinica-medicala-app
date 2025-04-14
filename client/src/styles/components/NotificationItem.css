@@ -23,6 +23,7 @@
   
   .notif-item-wrapper.unread {
     border-left: 4px solid #9b59b6;
+    background-color: #f4effb;
   }
   
   .notif-main {

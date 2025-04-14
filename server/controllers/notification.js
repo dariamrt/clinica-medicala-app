@@ -85,25 +85,31 @@ const createNotification = async (req, res) => {
 
 const markNotificationAsRead = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        if (!/^[0-9a-fA-F-]{36}$/.test(id)) {
-            return res.status(400).json({ message: "Invalid ID format!" });
-        }
-
-        const notification = await Notification.findByPk(id);
-        if (!notification) {
-            return res.status(404).json({ message: "Notification not found!" });
-        }
-
-        notification.is_read = true;
-        await notification.save();
-        res.status(200).json({ message: "Notification marked as read!", notification });
+      const { id } = req.params;
+  
+      if (!/^[0-9a-fA-F-]{36}$/.test(id)) {
+        return res.status(400).json({ message: "Invalid ID format!" });
+      }
+  
+      const notification = await Notification.findByPk(id);
+  
+      if (!notification) {
+        return res.status(404).json({ message: "Notification not found!" });
+      }
+  
+      if (notification.user_id !== req.user.id) {
+        return res.status(403).json({ message: "Not authorized to access this notification." });
+      }
+  
+      notification.is_read = true;
+      await notification.save();
+  
+      res.status(200).json({ message: "Notification marked as read!", notification });
     } catch (error) {
-        res.status(500).json({ message: "Error marking notification as read!" });
+      res.status(500).json({ message: "Error marking notification as read!" });
     }
 };
-
+  
 const deleteNotification = async (req, res) => {
     try {
         const { id } = req.params;
