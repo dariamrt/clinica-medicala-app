@@ -7,6 +7,6 @@ export const addMedicalHistory = async (patientId, data) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...data, patient_id: patientId }),
   });
-  if (!res.ok) throw new Error("Eroare la adăugarea fișei.");
+  if (!res.ok) throw new Error("Eroare la adaugarea fisei medicale.");
   return await res.json();
 };

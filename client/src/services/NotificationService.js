@@ -12,12 +12,12 @@ export const getMyNotifications = async () => {
     
 
     if (!response.ok) {
-      throw new Error("Nu s-au putut încărca notificările.");
+      throw new Error("Nu s-au putut incarca notificarile.");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Eroare la fetch notificări:", error);
+    console.error("Eroare la fetch notificari:", error);
     throw error;
   }
 };
@@ -46,7 +46,7 @@ export const deleteNotification = async (id) => {
 
   if (!res.ok) {
     const errorText = await res.text();
-    throw new Error(`Eroare API: ${errorText}`);
+    throw new Error(`Eroare la stergere: ${errorText}`);
   }
 
   return await res.json();
@@ -57,7 +57,7 @@ export const getUnreadCount = async () => {
     const all = await getMyNotifications();
     return all.filter((n) => !n.read).length;
   } catch (error) {
-    console.error("Eroare la numărarea notificărilor:", error);
+    console.error("Eroare la numaratul notificarilor necitite:", error);
     return 0;
   }
 };
@@ -70,7 +70,7 @@ export const getNotificationById = async (id) => {
     });
 
     if (!response.ok) {
-      throw new Error("Eroare la obținerea notificării.");
+      throw new Error("Eroare la obtinerea notificării.");
     }
 
     return await response.json();
@@ -78,4 +78,23 @@ export const getNotificationById = async (id) => {
     console.error("Eroare la fetch notificare:", error);
     throw error;
   }
+};
+
+export const sendNotification = async (notificationData) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(notificationData),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Eroare la trimiterea notificarii: ${errorText}`);
+  }
+
+  return await res.json();
 };

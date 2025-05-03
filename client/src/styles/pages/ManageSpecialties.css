@@ -1,0 +1,82 @@
+.manage-specialties {
+  padding: 2rem;
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(to bottom right, #f5f7fa, #d7e1ec);
+}
+
+.specialty-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.specialty-card {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.specialty-name-link {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #8e44ad;
+  margin-bottom: 0.8rem;
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.actions button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.warning {
+  color: #c0392b;
+  margin: 1rem 0;
+  font-weight: bold;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1.5rem;
+}
+
+.btn-confirm {
+  background-color: #c0392b;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: #ccc;
+}

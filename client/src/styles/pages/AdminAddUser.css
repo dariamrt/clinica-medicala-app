@@ -1,0 +1,61 @@
+.add-user-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffffcc;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.add-user-title {
+  text-align: center;
+  color: #8e44ad;
+  margin-bottom: 1.5rem;
+}
+
+.add-user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+input, select {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+button[type="submit"] {
+  background-color: #9b59b6;
+  color: white;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: center;
+  transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #8e44ad;
+}
+
+.form-error {
+  color: red;
+  text-align: center;
+}
+
+.form-success {
+  color: green;
+  text-align: center;
+}

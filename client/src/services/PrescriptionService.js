@@ -7,6 +7,6 @@ export const addPrescription = async (medicalHistoryId, data) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...data, medical_history_id: medicalHistoryId }),
   });
-  if (!res.ok) throw new Error("Eroare la adăugarea rețetei.");
+  if (!res.ok) throw new Error("Eroare la adaugarea retetei.");
   return await res.json();
 };

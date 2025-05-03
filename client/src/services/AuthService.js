@@ -10,7 +10,7 @@ export const login = async (email, password) => {
     });
 
     if (!response.ok) {
-      throw new Error("Email sau parolă incorectă!");
+      throw new Error("Email sau parolă incorecta!");
     }
 
     const loginData = await response.json();
@@ -41,7 +41,7 @@ export const register = async (userData) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Eroare la înregistrare!");
+      throw new Error(errorData.message || "Eroare la register!");
     }
 
     return await response.json();
@@ -71,7 +71,7 @@ export const getCurrentUser = async () => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch current user");
+      throw new Error("Eroare la fetch crt user");
     }
 
     return await response.json();

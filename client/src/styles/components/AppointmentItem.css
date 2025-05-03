@@ -101,3 +101,61 @@
   background-color: #ccc;
   color: #222;
 }
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background-color: #27ae60;
+  color: white;
+}
+
+.status-cancelled {
+  background-color: #c0392b;
+  color: white;
+}
+
+.status-pending {
+  background-color: #f1c40f;
+  color: black;
+}
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background-color: #27ae60;
+  color: white;
+}
+
+.status-cancelled {
+  background-color: #c0392b;
+  color: white;
+}
+
+.status-pending {
+  background-color: #f1c40f;
+  color: black;
+}
+
+.patient-link {
+  color: #9b59b6;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.action-btn.cancel {
+  background-color: #e74c3c;
+}
+.action-btn.cancel:hover {
+  background-color: #c0392b;
+}

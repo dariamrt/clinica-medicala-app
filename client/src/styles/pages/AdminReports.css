@@ -1,0 +1,71 @@
+.admin-reports-page {
+  display: flex;
+  min-height: calc(100vh - 80px); 
+  background: linear-gradient(to bottom right, #e0f7fa, #ede7f6);
+  padding: 0;
+}
+
+.report-sidebar {
+  width: 240px;
+  background-color: #8e44ad;
+  color: white;
+  padding: 2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.report-sidebar h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.report-menu {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.report-menu li {
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.report-menu li:hover {
+  background-color: #732d91;
+}
+
+.view-all-btn {
+  margin-top: auto;
+  background-color: #ffffff;
+  color: #8e44ad;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.view-all-btn:hover {
+  background-color: #f1e3f5;
+}
+
+.report-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.placeholder-text {
+  color: #555;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 3rem;
+}

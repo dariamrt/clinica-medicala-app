@@ -29,3 +29,21 @@ export const cancelAppointment = async (appointmentId) => {
 
   return await res.json();
 };
+
+export const getAllAppointments = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${API_URL}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error("Eroare la preluarea programărilor.");
+  }
+
+  return await res.json();
+};

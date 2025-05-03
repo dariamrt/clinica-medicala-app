@@ -32,7 +32,17 @@ import {
   SpecialtyList,
 } from "@pages/common";
 
-import { DashboardAdmin } from "@pages/admin";
+import { DashboardAdmin,
+  ManageSpecialties,
+  ManageDoctors,
+  AdminPatients,
+  AdminPatientDetails,
+  AdminAppointments,
+  AdminAddUser,
+  AdminReports,
+  AllReports
+ } from "@pages/admin";
+ 
 import { RedirectToRoleDashboard, ProtectedRoute, Footer } from "@components";
 import MainLayout from "./layouts/MainLayout";
 
@@ -71,6 +81,14 @@ const App = () => {
 
         {/* Admin */}
         <Route path="/dashboard-admin" element={<DashboardAdmin />} />
+        <Route path="/admin/specialties" element={<ManageSpecialties />} />
+        <Route path="/admin/doctors" element={<ManageDoctors />} />
+        <Route path="/admin/patients" element={<AdminPatients />} />
+        <Route path="/admin/patient/:id" element={<AdminPatientDetails />} />
+        <Route path="/admin/appointments" element={<AdminAppointments />} />
+        <Route path="/admin/add-user" element={<AdminAddUser />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/reports/all" element={<AllReports />} />
 
         {/* Common */}
         <Route path="/notifications" element={<MyNotifications />} />

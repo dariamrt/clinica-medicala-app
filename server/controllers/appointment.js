@@ -1,11 +1,33 @@
-const { Appointment, Availability, Notification, User } = require("../models");
+const { Appointment, Availability, Notification, User, Patient, Doctor } = require("../models");
 
 const getAllAppointments = async (req, res) => {
     try {
-        const appointments = await Appointment.findAll();
-        res.status(200).json(appointments);
+      const appointments = await Appointment.findAll({
+        include: [
+          {
+            model: Doctor,
+            attributes: ["first_name", "last_name"],
+            include: {
+              model: User,
+              attributes: ["email"]
+            }
+          },
+          {
+            model: Patient,
+            attributes: ["first_name", "last_name"],
+            include: {
+              model: User,
+              attributes: ["email"]
+            }
+          }
+        ],
+        order: [["date", "DESC"]],
+      });
+      console.log("appointment", appointments);
+
+      res.status(200).json(appointments);
     } catch (error) {
-        res.status(500).json({ message: "Error fetching appointments!" });
+      res.status(500).json({ message: "Error fetching appointments!" });
     }
 };
 

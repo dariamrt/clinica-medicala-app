@@ -8,7 +8,7 @@ export const getDoctorsBySpecialty = async (specialtyId) => {
 
   if (res.status === 404) return []; 
 
-  if (!res.ok) throw new Error("Eroare la obținerea doctorilor.");
+  if (!res.ok) throw new Error("Eroare la obtinerea doctorilor.");
   
   return await res.json();
 };
@@ -22,12 +22,12 @@ export const getDoctorAppointments = async (doctorId) => {
     });
 
     if (!response.ok) {
-      throw new Error("Nu s-au putut obține programările.");
+      throw new Error("Nu s-au putut obtine programarilore.");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Eroare la fetch programări:", error);
+    console.error("Eroare la fetch-ul progr:", error);
     throw error;
   }
 };
@@ -43,10 +43,17 @@ export const getMyAppointments = async () => {
   });
 
   if (!res.ok) {
-    throw new Error("Eroare la obținerea programărilor doctorului.");
+    throw new Error("Eroare la obtinerea programarilor doctorului.");
   }
 
   return await res.json();
 };
 
+export const getAllDoctors = async () => {
+  const res = await fetch(`${API_URL}`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Eroare la incarcarea doctorilor.");
+  return await res.json();
+};
 

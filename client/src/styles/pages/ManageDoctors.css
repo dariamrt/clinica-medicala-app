@@ -1,0 +1,64 @@
+.manage-doctors-page {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    max-width: 1100px;
+    margin: 2rem auto;
+  }
+  
+  .manage-doctors-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .manage-doctors-header h2 {
+    color: #8e44ad;
+  }
+  
+  .doctors-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .doctors-table th,
+  .doctors-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+  
+  .doctors-table th {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+  
+  .doctor-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .doctor-actions button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+  }
+  
+  .doctor-actions button:hover {
+    opacity: 0.9;
+  }
+  
+  .doctor-actions .btn-secondary {
+    background-color: #e67e22;
+    color: white;
+  }
+  
+  .doctor-actions .btn-secondary:hover {
+    background-color: #d35400;
+  }
+  

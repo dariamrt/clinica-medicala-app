@@ -2,7 +2,7 @@ const API_URL = "http://localhost:8080/api/patients";
 
 export const getAllPatients = async () => {
   const res = await fetch(`${API_URL}`, { credentials: "include" });
-  if (!res.ok) throw new Error("Eroare la obținerea pacienților.");
+  if (!res.ok) throw new Error("Eroare la obtinerea pacientilor.");
   return await res.json();
 };
 
@@ -20,14 +20,34 @@ export const getPatientMedicalHistory = async (id) => {
     });
 
     if (!response.ok) {
-      throw new Error("Eroare la încărcarea fișelor.");
+      throw new Error("Eroare la incarcarea fișelor.");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Eroare la preluare fișe medicale:", error);
+    console.error("Eroare la preluare fise medicale:", error);
     throw error;
   }
+};
+
+export const getPatientPrescriptions = async (id) => {
+  const response = await fetch(`${API_URL}/${id}/prescriptions`, {
+    method: "GET",
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Eroare la incarcarea retetelor.");
+  return await response.json();
+};
+
+export const addMedicalNote = async (data) => {
+  const response = await fetch(`${API_URL}/medical-note`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Eroare la adaugarea fisei medicale.");
+  return await response.json();
 };
 
 export const addPrescription = async ({ medical_history_id, content }) => {
@@ -42,12 +62,12 @@ export const addPrescription = async ({ medical_history_id, content }) => {
     });
 
     if (!response.ok) {
-      throw new Error("Eroare la adăugarea rețetei.");
+      throw new Error("Eroare la adaugarea retete.");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Eroare la POST prescription:", error);
+    console.error("Eroare la adaugat prescr:", error);
     throw error;
   }
 };
@@ -65,9 +85,18 @@ export const getMyAppointments = async () => {
 
   if (!res.ok) {
     const errorText = await res.text();
-    throw new Error(`Eroare API: ${errorText}`);
+    throw new Error(`Eroare get my appts: ${errorText}`);
   }
 
+  return await res.json();
+};
+
+export const getPatientAppointments = async (id) => {
+  const res = await fetch(`${API_URL}/${id}/appointments`, {
+    method: "GET",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Eroare la obtinerea programarilor.");
   return await res.json();
 };
 
@@ -84,7 +113,7 @@ export const getMyMedicalHistory = async () => {
 
   if (!res.ok) {
     const errorText = await res.text();
-    throw new Error(`Eroare la preluarea fișelor medicale: ${errorText}`);
+    throw new Error(`Eroare la preluarea fiselor medicale: ${errorText}`);
   }
 
   return await res.json();
@@ -103,7 +132,7 @@ export const getMyPrescriptions = async () => {
 
   if (!res.ok) {
     const errorText = await res.text();
-    throw new Error(`Eroare la preluarea rețetelor: ${errorText}`);
+    throw new Error(`Eroare la obtinerea retetelor: ${errorText}`);
   }
 
   return await res.json();

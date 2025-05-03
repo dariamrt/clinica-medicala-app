@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AuthService } from "@services";
 import { PatientAppointmentItem, DoctorAppointmentItem } from "@components";
+import { AdminAppointmentItem } from "../admin";
 
 const AppointmentItem = (props) => {
   const [role, setRole] = useState(null);
@@ -21,6 +22,7 @@ const AppointmentItem = (props) => {
 
   if (role === "doctor") return <DoctorAppointmentItem appointment={props.appointment} />;
   if (role === "patient") return <PatientAppointmentItem {...props} />;
+  if (role === "admin") return <AdminAppointmentItem appointment={props.appointment} />;
   return null;
 };
 

@@ -1,1 +1,9 @@
 export { default as DashboardAdmin } from "./DashboardAdmin";
+export { default as ManageSpecialties } from "./ManageSpecialties";
+export { default as ManageDoctors } from "./ManageDoctors";
+export { default as AdminPatients } from "./AdminPatients";
+export { default as AdminPatientDetails } from "./AdminPatientDetails";
+export { default as AdminAppointments } from "./AdminAppointments";
+export { default as AdminAddUser } from "./AdminAddUser";
+export { default as AdminReports } from "./AdminReports";
+export { default as AllReports } from "./AllReports";

@@ -8,3 +8,4 @@ export * as SpecialtyService from "./SpecialtyService";
 export * as UserService from "./UserService";
 export * as AppointmentService from "./AppointmentService";
 export * as AvailabilityService from "./AvailabilityService";
+export * as ReportService from "./ReportService"

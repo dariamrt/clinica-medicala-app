@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AuthService } from "@services";
-import { DoctorNavbar, PatientNavbar } from "@components";
+import { DoctorNavbar, PatientNavbar, AdminNavbar } from "@components";
 
 const RoleBasedNavbar = () => {
   const [role, setRole] = useState(null);
@@ -21,6 +21,7 @@ const RoleBasedNavbar = () => {
 
   if (role === "doctor") return <DoctorNavbar />;
   if (role === "patient") return <PatientNavbar />;
+  if (role === "admin") return <AdminNavbar />
   return null;
 };
 

@@ -1,38 +1,50 @@
 const { Doctor, Specialty, Patient, Appointment, User } = require("../models");
 
 const getAllDoctors = async (req, res) => {
-    try {
-        const doctors = await Doctor.findAll({
-            attributes: ["user_id", "first_name", "last_name", "phone_number", "salary"],
-            include: { model: Specialty, attributes: ["name"] },
-        });
-        res.status(200).json(doctors);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching doctors!" });
-    }
+  try {
+    const doctors = await Doctor.findAll({
+      attributes: ["user_id", "first_name", "last_name", "phone_number", "salary"],
+      include: [
+        {
+          model: User,
+          attributes: ["email"]
+        },
+        {
+          model: Specialty,
+          attributes: ["name"]
+        }
+      ]
+    });
+
+    res.status(200).json(doctors);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching doctors!" });
+  }
 };
 
 const getDoctorById = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        if (!/^[0-9a-fA-F-]{36}$/.test(id)) {
-            return res.status(400).json({ message: "Invalid ID format!" });
+  try {
+    const { id } = req.params;
+    const doctor = await Doctor.findByPk(id, {
+      attributes: ["user_id", "first_name", "last_name", "phone_number", "salary", "specialty_id"],
+      include: [
+        {
+          model: User,
+          attributes: ["email"]
+        },
+        {
+          model: Specialty,
+          attributes: ["name"]
         }
+      ]
+    });
 
-        const doctor = await Doctor.findByPk(id, {
-            attributes: ["user_id", "first_name", "last_name", "phone_number", "salary"],
-            include: { model: Specialty, attributes: ["name"] },
-        });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found!" });
 
-        if (!doctor) {
-            return res.status(404).json({ message: "Doctor not found!" });
-        }
-
-        res.status(200).json(doctor);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching doctor!" });
-    }
+    res.status(200).json(doctor);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching doctor!" });
+  }
 };
 
 const getDoctorsBySpecialty = async (req, res) => {
