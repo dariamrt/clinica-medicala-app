@@ -5,13 +5,6 @@
     background: linear-gradient(to bottom right, #fefefe, #f3e6ff);
   }
   
-  .page-title {
-    font-size: 1.8rem;
-    color: #8e44ad;
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-  
   .search-input {
     width: 100%;
     max-width: 400px;

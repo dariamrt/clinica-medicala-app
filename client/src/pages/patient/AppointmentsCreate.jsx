@@ -78,9 +78,9 @@ const AppointmentsCreate = () => {
     }
   };
   return (
-    <>
-      <div className="appointment-create-container">
-        <h2>Creare programare</h2>
+  <div className="page-wrapper">
+      <div className="medical-page-container">
+        <h2 className="page-title">Creare programare</h2>
   
         <div className="form-group">
           <label>Specializare</label>
@@ -150,7 +150,7 @@ const AppointmentsCreate = () => {
           )}
         </div>
   
-        <div className="checkbox">
+        <div className="checkbox-cas">
           <input
             type="checkbox"
             checked={reimbursedByCAS}
@@ -191,9 +191,9 @@ const AppointmentsCreate = () => {
           </div>
         )}
       </div>
-    </>
+  </div>
   );
-  
+
 };
 
 export default AppointmentsCreate;

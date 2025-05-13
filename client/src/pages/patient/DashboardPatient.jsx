@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService, UserService } from "@services";
-import { EditableField, UserProfileCard } from "@components/common";
+import { EditableField, UserProfileCard } from "@components";
 import patientAvatar from "@assets/patient-avatar.png";
 import "@styles/pages/Dashboard.css";
 
@@ -48,7 +48,6 @@ const DashboardPatient = () => {
   };
 
   return (
-    <div className="dashboard-container">
       <div className="dashboard-content">
         <div className="profile-section">
           {user && (
@@ -93,7 +92,6 @@ const DashboardPatient = () => {
           </button>
         </div>
       </div>
-    </div>
   );
 };
 

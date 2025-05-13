@@ -45,7 +45,8 @@ const ManageSpecialties = () => {
 
   return (
     <div className="manage-specialties">
-      <h2>Gestionare specializări</h2>
+      <h2 className="page-title">Gestionare specializări</h2>
+
       <div className="specialty-list">
         {specialties.map((spec) => (
           <div key={spec.id} className="specialty-card">

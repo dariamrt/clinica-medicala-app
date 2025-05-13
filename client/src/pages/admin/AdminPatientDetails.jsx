@@ -10,6 +10,7 @@ import "@styles/pages/AdminPatientDetails.css";
 
 const AdminPatientDetails = () => {
   const { id } = useParams();
+  // console.log("id primit:", id);
   const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
   const [history, setHistory] = useState([]);
@@ -22,6 +23,7 @@ const AdminPatientDetails = () => {
         const h = await PatientService.getPatientMedicalHistory(id);
         const r = await PatientService.getPatientPrescriptions(id);
         setPatient(p);
+        // console.log("pacient returnat:", p);
         setHistory(h);
         setPrescriptions(r);
       } catch (err) {
@@ -35,6 +37,7 @@ const AdminPatientDetails = () => {
   return (
     <div className="admin-patient-details-page">
       <h2 className="page-title">Detalii pacient</h2>
+      {!patient && <p>Se încarcă detalii sau pacientul nu a fost găsit.</p>}
 
       {patient && (
         <div className="patient-info-card">
@@ -66,8 +69,17 @@ const AdminPatientDetails = () => {
           <p className="empty-msg">Nicio rețetă disponibilă.</p>
         ) : (
           <div className="card-list">
-            {prescriptions.map((item) => (
-              <PrescriptionCard key={item.id} content={item.content} />
+            {prescriptions
+              .filter((item) => {
+                try {
+                  const parsed = JSON.parse(item.content);
+                  return Array.isArray(parsed?.medicamente);
+                } catch {
+                  return false;
+                }
+              })
+              .map((item) => (
+                <PrescriptionCard key={item.id} content={item.content} />
             ))}
           </div>
         )}

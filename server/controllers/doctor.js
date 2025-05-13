@@ -1,4 +1,4 @@
-const { Doctor, Specialty, Patient, Appointment, User } = require("../models");
+const { Doctor, Specialty, Patient, Appointment, Availability, User } = require("../models");
 
 const getAllDoctors = async (req, res) => {
   try {
@@ -11,7 +11,7 @@ const getAllDoctors = async (req, res) => {
         },
         {
           model: Specialty,
-          attributes: ["name"]
+          attributes: ["id", "name"]
         }
       ]
     });
@@ -150,11 +150,29 @@ const getAppointmentsForCurrentDoctor = async (req, res) => {
     res.status(500).json({ message: "Error fetching doctor's appointments!" });
   }
 };
+
+const getAvailabilitiesForCurrentDoctor = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+
+    const availabilities = await Availability.findAll({
+      where: { doctor_id: doctorId },
+      attributes: ["id", "date", "start_time", "end_time", "createdAt"],
+      order: [["date", "ASC"], ["start_time", "ASC"]],
+    });
+
+    res.status(200).json(availabilities);
+  } catch (error) {
+    console.error("Error fetching doctor's availabilities:", error);
+    res.status(500).json({ message: "Error fetching doctor's availabilities!" });
+  }
+};
   
 module.exports = { 
     getAllDoctors, 
     getDoctorById, 
     getDoctorsBySpecialty,
     getDoctorAppointments,
-    getAppointmentsForCurrentDoctor 
+    getAppointmentsForCurrentDoctor,
+    getAvailabilitiesForCurrentDoctor
 };

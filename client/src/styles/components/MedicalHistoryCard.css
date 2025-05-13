@@ -1,21 +1,59 @@
 .medical-history-card {
-  background-color: #f9f9f9;
-  border-left: 6px solid #9b59b6;
-  padding: 1rem;
+  background-color: var(--white);
+  border-left: 6px solid var(--blue);
+  padding: 1rem 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  color: #333;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  color: #2c3e50;
+  font-family: var(--font-body);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .medical-history-card p {
   margin: 0.4rem 0;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .medical-history-card strong {
-  color: #555;
+  color: var(--blue);
 }
 
 .medical-history-card .small-btn {
   margin-top: 1rem;
+  background-color: var(--blue);
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.medical-history-card .small-btn:hover {
+  background-color: #357ABD;
+}
+
+.prescription-info-box {
+  background-color: var(--blue-light);
+  border: 1px solid var(--blue);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.prescription-info-box p {
+  margin: 0.4rem 0;
+}
+
+@media (max-width: 768px) {
+  .medical-history-card {
+    padding: 1rem;
+  }
+
+  .medical-history-card p {
+    font-size: 0.95rem;
+  }
 }

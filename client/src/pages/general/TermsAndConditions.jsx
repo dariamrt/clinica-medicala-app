@@ -13,7 +13,7 @@ const TermsAndConditions = () => {
 
         <h2>1. Protecția datelor personale (GDPR)</h2>
         <p>
-          Conform **Regulamentului General privind Protecția Datelor (GDPR) - UE 2016/679**, clinică noastră colectează și prelucrează datele cu caracter personal în scopul furnizării serviciilor medicale, gestionării programărilor și asigurării unei experiențe sigure pacienților noștri.
+          Conform Regulamentului General privind Protecția Datelor (GDPR) - UE 2016/679, clinică noastră colectează și prelucrează datele cu caracter personal în scopul furnizării serviciilor medicale, gestionării programărilor și asigurării unei experiențe sigure pacienților noștri.
         </p>
 
         <h2>2. Ce date colectăm?</h2>

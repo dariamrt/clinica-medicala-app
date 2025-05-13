@@ -1,70 +1,116 @@
-.dashboard-container {
-  flex-grow: 1;
+.dashboard-content {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 3rem auto;
   width: 100%;
 }
 
-
-.dashboard-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 4rem;
-  padding: 2rem 4rem;
-  flex-wrap: wrap;
-}
-
-.profile-section {
+.profile-section,
+.left-panel {
   flex: 1;
-  min-width: 350px;
+  min-width: 320px;
 }
 
-.welcome-section {
-  flex: 1.5;
-  background: #ffffffdd;
-  backdrop-filter: blur(4px);
+.welcome-section,
+.right-panel {
+  flex: 1.2;
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   text-align: center;
-  min-width: 360px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  animation: slideInRight 0.6s ease;
 }
 
-.welcome-title {
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.welcome-title,
+.right-panel h1 {
   font-size: 2rem;
-  color: #9b59b6;
-  margin-bottom: 0.8rem;
+  color: var(--blue);
+  margin-bottom: 1rem;
+  font-family: var(--font-title);
 }
 
-.welcome-subtitle {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
+.welcome-title span,
+.highlighted-name {
+  color: var(--blue);
+  font-weight: bold;
+}
+
+.welcome-subtitle,
+.right-panel p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .action-button {
-  background-color: #9b59b6;
+  background-color: var(--blue);
   color: white;
   border: none;
-  padding: 0.8rem 1.8rem;
+  padding: 0.8rem 1.6rem;
   border-radius: 10px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   font-size: 1rem;
-  margin-bottom: 1.2rem;
-  transition: background-color 0.3s ease;
+  margin: 0.5rem 0;
 }
 
 .action-button:hover {
-  background-color: #8e44ad;
+  background-color: #357ABD;
 }
 
-.logout-button {
-  background-color: transparent;
-  color: #9b59b6;
-  border: none;
+.logout-button,
+.logout-btn {
+  background: none;
+  color: var(--red);
+  border: 2px solid var(--red);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
   margin-top: 1rem;
+}
+
+.logout-button:hover,
+.logout-btn:hover {
+  background-color: var(--red);
+  color: var(--white);
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    flex-direction: column;
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+
+  .welcome-section,
+  .right-panel {
+    padding: 1.5rem;
+  }
+
+  .welcome-title,
+  .right-panel h1 {
+    font-size: 1.5rem;
+  }
+
+  .action-button,
+  .logout-btn {
+    width: 100%;
+  }
 }

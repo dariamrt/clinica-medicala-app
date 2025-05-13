@@ -3,26 +3,25 @@
   background-color: #fff;
   border-radius: 10px;
   padding: 1.5rem;
-  margin-bottom: 1rem;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
 }
 
 .appointment-info {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
+  justify-content: space-between;
   font-size: 1rem;
-  color: #333;
+  color: #2c3e50;
 }
 
 .appointment-label {
   font-weight: 600;
   margin-right: 0.5rem;
-  color: #8e44ad;
+  color: var(--blue);
 }
 
 .appointment-status {
@@ -30,17 +29,32 @@
   text-transform: capitalize;
 }
 
-.appointment-status.confirmed {
-  color: green;
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  display: inline-block;
+  text-transform: capitalize;
 }
 
-.appointment-status.cancelled {
-  color: red;
+.status-confirmed {
+  background-color: #27ae60;
+  color: white;
+}
+
+.status-cancelled {
+  background-color: #c0392b;
+  color: white;
+}
+
+.status-pending {
+  background-color: #f1c40f;
+  color: black;
 }
 
 .cancel-btn {
   align-self: flex-start;
-  background-color: #e74c3c;
+  background-color: var(--red);
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -51,111 +65,23 @@
 }
 
 .cancel-btn:hover {
-  background-color: #c0392b;
-}
-
-.cancel-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.cancel-box {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
-}
-
-.cancel-actions {
-  margin-top: 1.2rem;
-  display: flex;
-  justify-content: space-around;
-  gap: 1rem;
-}
-
-.cancel-actions button {
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.cancel-actions button:first-child {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.cancel-secondary {
-  background-color: #ccc;
-  color: #222;
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: bold;
-  display: inline-block;
-  text-transform: capitalize;
-}
-
-.status-confirmed {
-  background-color: #27ae60;
-  color: white;
-}
-
-.status-cancelled {
-  background-color: #c0392b;
-  color: white;
-}
-
-.status-pending {
-  background-color: #f1c40f;
-  color: black;
-}
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: bold;
-  display: inline-block;
-  text-transform: capitalize;
-}
-
-.status-confirmed {
-  background-color: #27ae60;
-  color: white;
-}
-
-.status-cancelled {
-  background-color: #c0392b;
-  color: white;
-}
-
-.status-pending {
-  background-color: #f1c40f;
-  color: black;
+  background-color: #b12a2a;
 }
 
 .patient-link {
-  color: #9b59b6;
+  color: var(--blue);
   text-decoration: underline;
   cursor: pointer;
 }
 
-.action-btn.cancel {
-  background-color: #e74c3c;
-}
-.action-btn.cancel:hover {
-  background-color: #c0392b;
+@media (max-width: 768px) {
+  .appointment-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cancel-btn {
+    width: 100%;
+    text-align: center;
+  }
 }

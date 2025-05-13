@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MedicalHistoryCard } from "@components";
+import { PatientMedicalHistoryCard } from "@components";
 import { PatientService } from "@services";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +30,7 @@ const PatientMedicalHistory = () => {
         ) : (
           <div className="medical-list">
             {records.map((record) => (
-              <MedicalHistoryCard key={record.id} record={record} />
+              <PatientMedicalHistoryCard key={record.id} record={record} />
             ))}
           </div>
         )}

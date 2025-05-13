@@ -7,40 +7,43 @@
 
 .field-label {
   font-weight: 600;
-  color: #444;
+  color: #2c3e50;
   font-size: 1rem;
   margin-left: 0.2rem;
+  font-family: var(--font-body);
 }
 
 .field-input {
   padding: 0.7rem 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray-light);
   border-radius: 10px;
   font-size: 1rem;
-  background-color: white;
+  background: var(--gray-light);
   transition: all 0.3s ease;
+  font-family: var(--font-body);
 }
 
 .field-input:focus {
   outline: none;
-  border-color: #9b59b6;
-  box-shadow: 0 0 0 4px rgba(155, 89, 182, 0.2);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2);
 }
 
 .field-input.valid {
-  border-color: #27ae60;
-  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+  border-color: var(--mint);
+  box-shadow: 0 0 0 3px rgba(142, 209, 182, 0.3);
 }
 
 .field-input.invalid {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
 }
 
 .field-value {
   font-size: 1rem;
   color: #333;
-  background: #f2f2f2;
+  background: var(--gray-light);
   padding: 0.6rem 1rem;
   border-radius: 10px;
+  font-family: var(--font-body);
 }

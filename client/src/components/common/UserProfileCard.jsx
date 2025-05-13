@@ -1,5 +1,5 @@
 import React from "react";
-import "@styles/layout/UserProfileCard.css";
+import "@styles/components/UserProfileCard.css";
 
 const UserProfileCard = ({ children }) => {
   return (

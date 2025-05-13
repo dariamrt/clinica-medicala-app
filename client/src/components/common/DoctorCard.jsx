@@ -1,5 +1,5 @@
 import React from "react";
-import "@styles/layout/DoctorCard.css";
+import "@styles/components/DoctorCard.css";
 
 const DoctorCard = ({ doctor, showEmail = false, showPhone = false, onClick }) => {
   const fullName = `${doctor.first_name} ${doctor.last_name}`;

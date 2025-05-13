@@ -1,45 +1,31 @@
-.specialty-page {
-  min-height: calc(100vh - 80px); 
-  margin-top: 80px; 
-  padding: 2rem;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-x: hidden;
-}
-
-.specialty-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: #222;
-}
-
 .specialty-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  row-gap: 2rem;
+  column-gap: 8rem;
+  margin: 0 auto 2rem;
+  padding: 0 0.5rem;
   width: 100%;
-  max-width: 1000px;
-  padding: 0 1rem;
+  max-width: 1200px;
+  justify-items: center;
+  animation: fadeInGrid 0.5s ease-in;
 }
 
-.back-btn {
-  margin-top: 3rem;
-  padding: 0.6rem 1.4rem;
-  background-color: #9b59b6;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+
+@keyframes fadeInGrid {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.back-btn:hover {
-  background-color: #8e44ad;
+@media (max-width: 480px) {
+  .specialty-grid {
+    grid-template-columns: 1fr;
+    padding: 0 0.5rem;
+  }
 }

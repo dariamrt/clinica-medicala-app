@@ -12,7 +12,7 @@ import {
 
 import {
   DashboardDoctor,
-  DoctorAppointments,
+  DoctorSchedule,
   MedicalRecords,
   PatientsList,
   PatientDetails,
@@ -67,7 +67,7 @@ const App = () => {
 
         {/* Doctor */}
         <Route path="/dashboard-doctor" element={<DashboardDoctor />} />
-        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+        <Route path="/doctor/schedule" element={<DoctorSchedule />} />
         <Route path="/doctor/patient/:id/records" element={<MedicalRecords />} />
         <Route path="/doctor/patients" element={<PatientsList />} />
         <Route path="/doctor/patient/:id" element={<PatientDetails />} />

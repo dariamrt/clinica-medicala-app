@@ -26,7 +26,6 @@
   border-radius: 16px;
   padding: 2rem;
   color: #333;
-  /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); */
   flex: 1;
   max-width: 400px;
   min-width: 300px;
@@ -40,7 +39,6 @@
   border-radius: 16px;
   padding: 2rem;
   color: #333;
-  /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); */
   flex: 2;
   min-width: 300px;
 }
@@ -53,17 +51,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1rem;
-}
-
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 2rem;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  justify-content: center;
 }
 
 .primary-btn,

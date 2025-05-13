@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { PatientNavbar } from "@components";
-import { AppointmentItem } from "@components/common";
+import { useEffect, useState } from "react";
+import { AppointmentItem } from "@components";
 import { PatientService } from "@services";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -33,10 +32,9 @@ const PatientAppointments = () => {
   }, []);
 
   return (
-    <>
-      <PatientNavbar />
-      <div className="appointments-page-wrapper">
-        <h2 className="appointments-title">Programările mele</h2>
+  <div className="page-wrapper">
+    <div className="medical-page-container">
+        <h2 className="page-title">Programările mele</h2>
 
         {error && <p className="empty-message">{error}</p>}
 
@@ -59,7 +57,7 @@ const PatientAppointments = () => {
           <ArrowLeft size={18} /> Înapoi
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -4,13 +4,6 @@
     background: #fafafa;
   }
   
-  .page-title {
-    color: #8e44ad;
-    margin-bottom: 2rem;
-    text-align: center;
-    font-size: 1.8rem;
-  }
-  
   .patient-info-card {
     background: #fff;
     padding: 1.5rem;
@@ -43,7 +36,6 @@
   }
   
   .action-btn {
-    background-color: #9b59b6;
     color: white;
     padding: 0.5rem 1.2rem;
     font-size: 0.95rem;
@@ -57,15 +49,5 @@
     background-color: #8e44ad;
   }
   
-  .back-btn {
-    margin-top: 2rem;
-    background-color: #8e44ad;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+
   

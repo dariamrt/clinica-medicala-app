@@ -41,3 +41,57 @@
     color: #2c3e50;
   }
   
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.95rem;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .styled-table thead {
+    background-color: #6c63ff;
+    color: white;
+    text-align: left;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .styled-table tbody tr:hover {
+    background-color: #f3f3f3;
+  }
+  
+  .scroll-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .report-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .report-actions button {
+    padding: 0.5rem 1.2rem;
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .report-actions button:hover {
+    background-color: #554eda;
+  }
+  

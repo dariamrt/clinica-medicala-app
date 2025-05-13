@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SpecialtyService } from "@services";
-import { RoleBasedNavbar } from "@components";
 import { ArrowLeft } from "lucide-react";
 import { SpecialtyItem } from "@components/common";
 import "@styles/pages/SpecialtyList.css";
@@ -23,9 +22,9 @@ const SpecialtyList = () => {
   }, []);
 
   return (
-    <>
-      <div className="specialty-page">
-        <h2 className="specialty-title">Specializări disponibile</h2>
+    <div className="page-wrapper">
+      <div className="medical-page-container">
+        <h2 className="page-title">Specializări disponibile</h2>
 
         <div className="specialty-grid">
           {specialties.map((spec) => (
@@ -33,7 +32,6 @@ const SpecialtyList = () => {
               key={spec.id}
               name={spec.name}
               onClick={() => navigate(`/doctor/specialties/${spec.id}`)}
-
             />
           ))}
         </div>
@@ -43,7 +41,7 @@ const SpecialtyList = () => {
           Înapoi
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PatientService } from "@services";
-import PatientCard from "@components/common/PatientCard";
-import DoctorNavbar from "@components/doctor/DoctorNavbar";
+import { PatientCard } from "@components";
 import { ArrowLeft } from "lucide-react";
 import "@styles/pages/PatientsList.css";
 
@@ -31,7 +30,7 @@ const PatientsList = () => {
   return (
     <>
       <div className="patients-page">
-        <h2>Pacienții mei</h2>
+        <h2 className="page-title">Pacienții mei</h2>
         <input
           type="text"
           placeholder="Caută după nume, prenume sau email..."

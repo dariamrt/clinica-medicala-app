@@ -38,3 +38,4 @@ export const getAllUsers = async () => {
     throw error;
   }
 };
+

@@ -30,8 +30,8 @@ const AdminReports = () => {
 
   return (
     <div className="admin-reports-page">
+      <h2 className="page-title">Rapoarte</h2>
       <aside className="reports-sidebar">
-        <h3 className="sidebar-title">Rapoarte</h3>
         <div
           className={`sidebar-item ${selectedReport === "cancellation-rate" ? "active" : ""}`}
           onClick={() => setSelectedReport("cancellation-rate")}

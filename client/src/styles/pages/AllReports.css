@@ -4,11 +4,6 @@
   min-height: 100vh;
 }
 
-.page-title {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  color: #8e44ad;
-}
 
 .report-list {
   display: flex;
@@ -52,4 +47,30 @@
   overflow-x: auto;
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+.json-rendered {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: "Courier New", monospace;
+  color: #2d2d2d;
+}
+
+.json-rendered strong {
+  display: block;
+  margin-top: 0.5rem;
+  color: #6c63ff;
+}
+
+.json-rendered pre {
+  background: #ffffff;
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

@@ -41,10 +41,10 @@ const DoctorsBySpecialty = () => {
   };
 
   return (
-    <>
-      <div className="doctors-specialty-page">
-        <h2 className="doctors-title">Doctori specializați</h2>
-
+    <div className="page-wrapper">
+      <div className="medical-page-container">
+        <h2 className="page-title">Doctori specializați</h2>
+        
         {loading ? (
           <p className="loading-msg">Se încarcă...</p>
         ) : doctors.length === 0 ? (
@@ -66,7 +66,7 @@ const DoctorsBySpecialty = () => {
           Înapoi
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

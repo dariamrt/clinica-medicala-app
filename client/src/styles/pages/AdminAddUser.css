@@ -34,7 +34,6 @@ input, select {
 }
 
 button[type="submit"] {
-  background-color: #9b59b6;
   color: white;
   padding: 0.8rem 1.6rem;
   border: none;
@@ -46,9 +45,6 @@ button[type="submit"] {
   transition: background 0.3s;
 }
 
-button[type="submit"]:hover {
-  background-color: #8e44ad;
-}
 
 .form-error {
   color: red;

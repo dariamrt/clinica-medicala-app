@@ -33,23 +33,3 @@
   max-width: 1200px;
   padding: 0 10px;
 }
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 40px;
-  background-color: #9b4dc2;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.back-btn:hover {
-  background-color: #802fa8;
-}

@@ -54,7 +54,7 @@ const ManageDoctors = () => {
   return (
     <div className="manage-doctors-page">
       <div className="manage-doctors-header">
-        <h2>Gestionare Doctori</h2>
+        <h2 className="page-title">Gestionare Doctori</h2>
         <button onClick={handleAddClick}>Adaugă doctor</button>
       </div>
 
@@ -73,7 +73,7 @@ const ManageDoctors = () => {
             {doctors.map((doc) => (
               <tr key={doc.user_id}>
                 <td>{doc.first_name} {doc.last_name}</td>
-                <td>{doc.email}</td>
+                <td>{doc.User?.email || "—"}</td>
                 <td>{doc.phone_number || "—"}</td>
                 <td>{doc.specialty?.name || "—"}</td>
                 <td className="doctor-actions">

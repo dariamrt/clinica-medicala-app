@@ -10,10 +10,10 @@ const ManageAvailabilityModal = ({ doctor, onClose }) => {
 
   const fetchAvailability = async () => {
     try {
-      const data = await AvailabilityService.getDoctorAvailableTimes(doctor.user_id);
+      const data = await AvailabilityService.getDoctorAvailability(doctor.user_id);
       setAvailability(data);
     } catch (err) {
-      console.error("Eroare la incarcarea disp:", err);
+      console.error("Eroare la incarcarea disponibilitatilor:", err);
     }
   };
 
@@ -24,28 +24,29 @@ const ManageAvailabilityModal = ({ doctor, onClose }) => {
   const handleAdd = async () => {
     if (!date || !start || !end) return alert("Completează toate câmpurile!");
     try {
-      await AvailabilityService.add({
+      await AvailabilityService.addAvailability({
         doctor_id: doctor.user_id,
         date,
         start_time: start,
         end_time: end
       });
-      fetchAvailability();
+      await fetchAvailability();
       setDate("");
       setStart("");
       setEnd("");
     } catch (err) {
-      console.error("Eroare la adaugare disp:", err);
+      console.error("Eroare la adăugare disponibilitate:", err);
+      alert("Eroare la adăugare disponibilitate.");
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Sunteți sigur(ă) că vrei să ștergi această disponibilitate?")) return;
     try {
-      await AvailabilityService.remove(id);
-      fetchAvailability();
+      await AvailabilityService.deleteAvailability(id);
+      await fetchAvailability();
     } catch (err) {
-      console.error("Eroare la stergere avail:", err);
+      console.error("Eroare la ștergere disponibilitate:", err);
     }
   };
 

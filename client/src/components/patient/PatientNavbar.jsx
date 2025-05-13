@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Menu, X, Bell } from "lucide-react";
 import logo from "@assets/logo.png";
 import { AuthService, NotificationService } from "@services";
 import "@styles/layout/Navbar.css";
@@ -8,6 +8,7 @@ import "@styles/layout/Navbar.css";
 const PatientNavbar = () => {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -50,7 +51,28 @@ const PatientNavbar = () => {
           </Link>
         </li>
       </ul>
+
+      <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+        {menuOpen ? <X /> : <Menu />}
+      </button>
+
+      <ul className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <li><Link to="/dashboard-patient" onClick={() => setMenuOpen(false)}>Acasă</Link></li>
+        <li><Link to="/patient/appointments/create" onClick={() => setMenuOpen(false)}>Creează programare</Link></li>
+        <li><Link to="/patient/appointments" onClick={() => setMenuOpen(false)}>Programările mele</Link></li>
+        <li><Link to="/patient/prescriptions" onClick={() => setMenuOpen(false)}>Rețetele mele</Link></li>
+        <li><Link to="/patient/medical-history" onClick={() => setMenuOpen(false)}>Istoric medical</Link></li>
+        <li><Link to="/specialties" onClick={() => setMenuOpen(false)}>Doctorii clinicii</Link></li>
+        <li><Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link></li>
+        <li>
+          <Link to="/notifications" onClick={() => setMenuOpen(false)} className="notif-wrapper">
+            <Bell />
+            {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
+          </Link>
+        </li>
+      </ul>
     </nav>
+
   );
 };
 

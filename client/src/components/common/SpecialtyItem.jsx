@@ -1,4 +1,3 @@
-import React from "react";
 import "@styles/components/SpecialtyItem.css";
 
 const SpecialtyItem = ({ name, onClick }) => {

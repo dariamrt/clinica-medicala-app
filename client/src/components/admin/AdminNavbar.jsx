@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import logo from "@assets/logo.png";
 import "@styles/layout/Navbar.css";
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className="navbar">
@@ -13,17 +15,20 @@ const AdminNavbar = () => {
         <span className="nav-title">Admin Panel</span>
       </div>
 
-      <ul className="navbar-links">
-        <li><Link to="/dashboard-admin">Acasă</Link></li>
-        <li><Link to="/admin/specialties">Specializări</Link></li>
-        <li><Link to="/admin/doctors">Doctori</Link></li>
-        <li><Link to="/admin/patients">Pacienți</Link></li>
-        <li><Link to="/admin/appointments">Programări</Link></li>
-        <li><Link to="/admin/add-user">Adaugă utilizator</Link></li>
-        <li><Link to="/admin/reports">Rapoarte</Link></li>
+      <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+        {menuOpen ? <X /> : <Menu />}
+      </button>
+
+      <ul className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <li><Link to="/dashboard-admin" onClick={() => setMenuOpen(false)}>Acasă</Link></li>
+        <li><Link to="/admin/specialties" onClick={() => setMenuOpen(false)}>Specializări</Link></li>
+        <li><Link to="/admin/doctors" onClick={() => setMenuOpen(false)}>Doctori</Link></li>
+        <li><Link to="/admin/patients" onClick={() => setMenuOpen(false)}>Pacienți</Link></li>
+        <li><Link to="/admin/appointments" onClick={() => setMenuOpen(false)}>Programări</Link></li>
+        <li><Link to="/admin/add-user" onClick={() => setMenuOpen(false)}>Adaugă utilizator</Link></li>
+        <li><Link to="/admin/reports" onClick={() => setMenuOpen(false)}>Rapoarte</Link></li>
       </ul>
     </nav>
-
   );
 };
 

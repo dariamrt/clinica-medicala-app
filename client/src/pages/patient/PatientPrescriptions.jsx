@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PatientService } from "@services";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { PrescriptionCard } from "@components";
+import { PatientPrescriptionCard } from "@components";
 import "@styles/pages/MedicalShared.css";
 
 const PatientPrescriptions = () => {
@@ -30,7 +30,7 @@ const PatientPrescriptions = () => {
         ) : (
           <div className="medical-list">
             {prescriptions.map((item) => (
-              <PrescriptionCard key={item.id} content={item.content} />
+              <PatientPrescriptionCard key={item.id} content={item.content} createdAt={item.createdAt} />
             ))}
           </div>
         )}

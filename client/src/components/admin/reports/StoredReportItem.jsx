@@ -3,21 +3,14 @@ import { ReportService } from "@services";
 import { Eye, Trash2 } from "lucide-react";
 
 const StoredReportItem = ({ report, onDelete, onView }) => {
-  const handleDelete = async () => {
-    if (!window.confirm("Sunteți sigur că vrei să ștergi acest raport?")) return;
-
-    try {
-      await ReportService.deleteReport(report.id);
-      onDelete?.(report.id);
-    } catch {
-      alert("Eroare la sters raport.");
-    }
+  const handleDelete = () => {
+    onDelete?.(report); 
   };
 
   return (
     <div className="report-card">
       <div className="report-info">
-        <h4>Tip: {report.type.replace(/_/g, " ")}</h4>
+        <h4>Tip: {report.report_type?.replace(/_/g, " ") || "Necunoscut"} </h4>
         <p>Creat la: {new Date(report.createdAt).toLocaleString()}</p>
       </div>
 

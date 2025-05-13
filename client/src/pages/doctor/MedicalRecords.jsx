@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MedicalHistoryCard, DoctorNavbar } from "@components";
+import { MedicalHistoryCard, AddPrescriptionModal } from "@components";
 import { PatientService } from "@services";
-import AddPrescriptionModal from "@components/doctor/AddPrescriptionModal";
 import { ArrowLeft } from "lucide-react";
 import "@styles/pages/MedicalRecords.css";
 
@@ -38,9 +37,8 @@ const MedicalRecords = () => {
   };
 
   return (
-    <>
       <div className="medical-records-container">
-        <h2 className="records-title">Fișe medicale pacient</h2>
+        <h2 className="page-title">Fișe medicale pacient</h2>
 
         {records.length === 0 ? (
           <p className="empty-msg">Nu există fișe medicale.</p>
@@ -76,7 +74,6 @@ const MedicalRecords = () => {
           />
         )}
       </div>
-    </>
   );
 };
 

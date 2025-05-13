@@ -46,7 +46,7 @@ const MyNotifications = () => {
 
   return (
     <div className="page-wrapper">
-      <div className="notifications-page">
+      <div className="medical-page-container">
         <h2 className="page-title">Notificările mele</h2>
 
         {loading ? (

@@ -35,7 +35,7 @@ const AdminAppointments = () => {
 
   return (
     <div className="appointments-page-wrapper">
-      <h2 className="appointments-title">Toate programările</h2>
+      <h2 className="page-title">Toate programările</h2>
 
       <div className="search-container">
         <input

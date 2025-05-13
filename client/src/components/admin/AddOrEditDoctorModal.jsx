@@ -11,6 +11,7 @@ const AddOrEditDoctorModal = ({ doctor, onClose, onSubmit }) => {
     phone_number: "",
     salary: "",
     specialty_id: "",
+    password: ""
   });
 
   useEffect(() => {
@@ -31,13 +32,15 @@ const AddOrEditDoctorModal = ({ doctor, onClose, onSubmit }) => {
       setFormData({
         first_name: doctor.first_name || "",
         last_name: doctor.last_name || "",
-        email: doctor.email || "",
+        email: doctor.email || doctor.User?.email || "",
         phone_number: doctor.phone_number || "",
         salary: doctor.salary || "",
-        specialty_id: doctor.specialty_id || "",
+        specialty_id: doctor.specialty_id || doctor.specialty?.id || "",
+        password: "",
       });
     }
   }, [doctor]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +64,20 @@ const AddOrEditDoctorModal = ({ doctor, onClose, onSubmit }) => {
           salary: formData.salary,
         });
       } else {
-        await DoctorService.createDoctor(formData);
+        const user = await UserService.createUser({
+          email: formData.email,
+          password: formData.password,
+          role: "doctor"
+        });
+
+        await DoctorService.createDoctor({
+          user_id: user.id,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          phone_number: formData.phone_number,
+          specialty_id: formData.specialty_id,
+          salary: formData.salary,
+        });
       }
 
       onSubmit();
@@ -77,50 +93,28 @@ const AddOrEditDoctorModal = ({ doctor, onClose, onSubmit }) => {
       <div className="doctor-modal" onClick={(e) => e.stopPropagation()}>
         <h3>{doctor ? "Editează doctor" : "Adaugă doctor"}</h3>
         <form onSubmit={handleSubmit}>
-          <input
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            placeholder="Prenume"
-            required
-          />
-          <input
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-            placeholder="Nume"
-            required
-          />
-          <input
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            required
-          />
-          <input
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={handleChange}
-            placeholder="Telefon"
-          />
-          <input
-            name="salary"
-            value={formData.salary}
-            onChange={handleChange}
-            placeholder="Salariu"
-            type="number"
-            min="0"
-          />
+          <input name="first_name" value={formData.first_name} onChange={handleChange} placeholder="Prenume" required />
+          <input name="last_name" value={formData.last_name} onChange={handleChange} placeholder="Nume" required />
+          <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
+          <input name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="Telefon" />
+          <input name="salary" value={formData.salary} onChange={handleChange} placeholder="Salariu" type="number" min="0" />
+
+          {!doctor && (
+            <input name="password" value={formData.password} onChange={handleChange} placeholder="Parolă" type="password" required />
+          )}
           <select
             name="specialty_id"
-            value={formData.specialty_id}
+            value={String(formData.specialty_id)}
             onChange={handleChange}
             required
           >
-            <option value="">Selectează specializare</option>
+            {doctor && !specialties.some(s => String(s.id) === String(formData.specialty_id)) && (
+              <option value={String(formData.specialty_id)} disabled>
+                {doctor.specialty?.name || "Specializarea actuală"}
+              </option>
+            )}
             {specialties.map((spec) => (
-              <option key={spec.id} value={spec.id}>
+              <option key={spec.id} value={String(spec.id)}>
                 {spec.name}
               </option>
             ))}
@@ -128,9 +122,7 @@ const AddOrEditDoctorModal = ({ doctor, onClose, onSubmit }) => {
 
           <div className="modal-actions">
             <button type="submit">{doctor ? "Salvează" : "Adaugă"}</button>
-            <button type="button" onClick={onClose}>
-              Anulează
-            </button>
+            <button type="button" onClick={onClose}>Anulează</button>
           </div>
         </form>
       </div>

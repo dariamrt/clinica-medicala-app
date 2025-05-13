@@ -2,14 +2,25 @@ const { Patient, MedicalHistory, Prescription, Doctor, User, Appointment } = req
 
 const getAllPatients = async (req, res) => {
     try {
-        const patients = await Patient.findAll({
-            attributes: ["user_id", "first_name", "last_name", "CNP", "gender", "phone_number", "address"],
-        });
-        res.status(200).json(patients);
+      const patients = await Patient.findAll({
+        attributes: ["user_id", "first_name", "last_name", "CNP", "gender", "phone_number", "address"],
+        include: {
+          model: User,
+          attributes: ["email"]
+        }
+      });
+  
+      const formatted = patients.map((p) => ({
+        ...p.toJSON(),
+        email: p.User?.email || null
+      }));
+  
+      res.status(200).json(formatted);
     } catch (error) {
-        res.status(500).json({ message: "Error fetching patients!" });
+      res.status(500).json({ message: "Error fetching patients!" });
     }
-};
+  };
+  
 
 const getPatientById = async (req, res) => {
     try {
@@ -21,13 +32,20 @@ const getPatientById = async (req, res) => {
 
         const patient = await Patient.findByPk(id, {
             attributes: ["user_id", "first_name", "last_name", "CNP", "gender", "phone_number", "address"],
-        });
+            include: {
+              model: User,
+              attributes: ["email"]
+            }
+          });          
 
         if (!patient) {
             return res.status(404).json({ message: "Patient not found!" });
         }
 
-        res.status(200).json(patient);
+        res.status(200).json({
+            ...patient.toJSON(),
+            email: patient.User?.email || null
+          });          
     } catch (error) {
         res.status(500).json({ message: "Error fetching patient!" });
     }
@@ -181,19 +199,44 @@ const getAppointmentsForCurrentPatient = async (req, res) => {
   
  
 const getMyMedicalHistory = async (req, res) => {
-    try {
-      const patientId = req.user.id;
-  
-      const history = await MedicalHistory.findAll({
-        where: { patient_id: patientId },
-        attributes: ["id", "diagnosis", "doctor_id", "notes", "createdAt", "updatedAt"],
-      });
-  
-      res.status(200).json(history);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching your medical history." });
-    }
+  try {
+    const patientId = req.user.id;
+
+    const history = await MedicalHistory.findAll({
+      where: { patient_id: patientId },
+      attributes: ["id", "diagnosis", "doctor_id", "notes", "createdAt", "updatedAt"],
+      include: [
+        {
+          model: Prescription,
+          attributes: ["id", "content"]
+        }
+      ],
+      raw: true,
+      nest: true
+    });
+
+    const doctorIds = [...new Set(history.map(h => h.doctor_id))];
+
+    const doctors = await Doctor.findAll({
+      where: { user_id: doctorIds },
+      attributes: ["user_id", "first_name", "last_name"]
+    });
+
+    const doctorMap = Object.fromEntries(
+      doctors.map(doc => [doc.user_id, { first_name: doc.first_name, last_name: doc.last_name }])
+    );
+
+    const enrichedHistory = history.map(h => ({
+      ...h,
+      Doctor: doctorMap[h.doctor_id] || null
+    }));
+
+    res.status(200).json(enrichedHistory);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching your medical history.", error: error.message });
+  }
 };
+
 
 const getMyPrescriptions = async (req, res) => {
     try {

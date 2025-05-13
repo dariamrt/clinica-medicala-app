@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { DoctorNavbar, PatientCard, AddMedicalHistoryModal, AddPrescriptionModal } from "@components";
+import { MedicalHistoryCard, PatientCard, AddMedicalHistoryModal, AddPrescriptionModal } from "@components";
 import { PatientService, AuthService } from "@services";
-import MedicalHistoryCard from "@components/common/MedicalHistoryCard";
 import { ArrowLeft } from "lucide-react";
 import "@styles/pages/PatientDetails.css";
 
@@ -53,7 +52,7 @@ const PatientDetails = () => {
     <>
       <div className="patient-details-container">
         <div className="patient-details-header">
-          <h2>Detalii pacient</h2>
+        <h2 className="page-title">Detalii pacient</h2>
         </div>
 
         <div className="patient-details-content">
