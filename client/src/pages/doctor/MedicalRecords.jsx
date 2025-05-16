@@ -37,7 +37,8 @@ const MedicalRecords = () => {
   };
 
   return (
-      <div className="medical-records-container">
+    <div className="page-wrapper">
+      <div className="medical-page-container">
         <h2 className="page-title">Fișe medicale pacient</h2>
 
         {records.length === 0 ? (
@@ -74,6 +75,7 @@ const MedicalRecords = () => {
           />
         )}
       </div>
+    </div>
   );
 };
 

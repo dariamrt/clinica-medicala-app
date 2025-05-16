@@ -47,3 +47,19 @@ export const getAllAppointments = async () => {
 
   return await res.json();
 };
+
+export const updateAppointment = async (appointmentId, data) => {
+  const res = await fetch(`${API_URL}/${appointmentId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Eroare la actualizarea programarii!");
+  }
+
+  return await res.json();
+};

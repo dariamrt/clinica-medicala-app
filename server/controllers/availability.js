@@ -169,10 +169,22 @@ const deleteAvailability = async (req, res) => {
     }
 };
 
+const getAllAvailabilities = async (req, res) => {
+  try {
+    const availabilities = await Availability.findAll({
+      order: [["date", "ASC"], ["start_time", "ASC"]],
+    });
+    res.status(200).json(availabilities);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching all availabilities!" });
+  }
+};
+
 module.exports = {
     createAvailability,
     getAvailabilityByDoctor,
     getAvailabilityById,
     updateAvailability,
     deleteAvailability,
+    getAllAvailabilities
 };

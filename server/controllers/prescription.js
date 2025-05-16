@@ -46,7 +46,7 @@ const updatePrescription = async (req, res) => {
             return res.status(404).json({ message: "Prescription not found!" });
         }
 
-        prescription.content = content;
+        prescription.content = typeof content === "string" ? JSON.parse(content) : content;
         await prescription.save();
 
         res.status(200).json({ message: "Prescription successfully updated!", prescription });
@@ -75,9 +75,28 @@ const deletePrescription = async (req, res) => {
     }
 };
 
+const getPrescriptionsByMedicalHistoryId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!/^[0-9a-fA-F-]{36}$/.test(id)) {
+      return res.status(400).json({ message: "Invalid medical history ID format!" });
+    }
+
+    const prescriptions = await Prescription.findAll({
+      where: { medical_history_id: id }
+    });
+
+    res.status(200).json(prescriptions);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching for medical history!" });
+  }
+};
+
 module.exports = {
     getAllPrescriptions,
     getPrescriptionById,
     updatePrescription,
     deletePrescription,
+    getPrescriptionsByMedicalHistoryId
 };

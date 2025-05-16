@@ -3,6 +3,7 @@ const router = express.Router();
 const { availabilityController } = require("../controllers");
 const { checkAuth, checkPermission } = require("../middlewares/checkPermission");
 
+router.get("/all", checkAuth, checkPermission(["admin"]), availabilityController.getAllAvailabilities);
 router.post("/", checkAuth, checkPermission(["admin"]), availabilityController.createAvailability);
 router.get("/doctor/:doctor_id", checkAuth, availabilityController.getAvailabilityByDoctor);
 router.get("/:id", checkAuth, availabilityController.getAvailabilityById);

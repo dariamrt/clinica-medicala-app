@@ -2,10 +2,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 150vh;
   background: linear-gradient(to bottom right, var(--mint-light), var(--blue-light));
   padding: 1rem;
-  overflow: hidden;
   font-family: var(--font-body);
 }
 

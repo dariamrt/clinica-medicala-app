@@ -60,7 +60,7 @@ const CancellationRateReport = () => {
       ) : (
         <div>
           <p><strong>{cancellationRate}</strong> din programări au fost anulate.</p>
-          <button onClick={handleSave}>Salvează raportul</button>ț
+          <button onClick={handleSave}>Salvează raportul</button>
           <button onClick={handleDownloadPDF}>Descarcă PDF</button>
           {saved && <p className="success-msg">Raport salvat cu succes!</p>}
         </div>

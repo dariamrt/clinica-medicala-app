@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NotificationService } from "@services";
-import { NotificationItem } from "@components";
+import { NotificationItem, DeleteConfirmModal } from "@components";
 import "@styles/pages/NotificationsPage.css";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 const MyNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [notificationToDelete, setNotificationToDelete] = useState(null);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -35,12 +37,19 @@ const MyNotifications = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Ești sigur(ă) că vrei să ștergi această notificare?")) return;
+    setNotificationToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await NotificationService.deleteNotification(id);
+      await NotificationService.deleteNotification(notificationToDelete);
       fetchData();
     } catch {
       alert("Eroare la ștergerea notificării!");
+    } finally {
+      setShowDeleteModal(false);
+      setNotificationToDelete(null);
     }
   };
 
@@ -64,6 +73,16 @@ const MyNotifications = () => {
               />
             ))}
           </div>
+        )}
+
+        {showDeleteModal && (
+          <DeleteConfirmModal
+            onCancel={() => {
+              setShowDeleteModal(false);
+              setNotificationToDelete(null);
+            }}
+            onConfirm={confirmDelete}
+          />
         )}
 
         <button className="back-btn" onClick={() => navigate(-1)}>

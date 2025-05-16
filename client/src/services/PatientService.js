@@ -52,7 +52,7 @@ export const addMedicalNote = async (data) => {
 
 export const addPrescription = async ({ medical_history_id, content }) => {
   try {
-    const response = await fetch("${API_URL}/prescription", {
+    const response = await fetch(`${API_URL}/prescription`, {
       method: "POST",
       credentials: "include",
       headers: {

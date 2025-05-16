@@ -1,97 +1,163 @@
 .report-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  
-  .report-card h2 {
-    font-size: 1.5rem;
-    color: #8e44ad;
-    margin-bottom: 1.5rem;
-  }
-  
-  .report-grid {
-    display: flex;
-    justify-content: space-between;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.report-card h2 {
+  font-size: 1.5rem;
+  color: var(--blue);
+  font-family: var(--font-title);
+  margin-bottom: 1.5rem;
+}
+
+.report-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.report-box {
+  flex: 1;
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  min-width: 180px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.report-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.report-box h3 {
+  font-size: 1.2rem;
+  color: var(--blue);
+  margin-bottom: 1rem;
+  font-family: var(--font-title);
+}
+
+.report-box h4 {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-title);
+}
+
+.report-box p {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  background-color: var(--white);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.styled-table thead {
+  background-color: var(--blue);
+  color: white;
+  text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mint-light);
+}
+
+.styled-table tbody tr:hover {
+  background-color: var(--mint-light);
+}
+
+.scroll-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  max-width: 100%;
+}
+
+.report-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.report-actions button {
+  padding: 0.6rem 1.2rem;
+  background-color: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: var(--font-body);
+  flex: 1;
+  min-width: 120px;
+}
+
+.report-actions button:hover {
+  background-color: #357ABD;
+}
+
+.success-msg {
+  margin-top: 1rem;
+  color: var(--mint);
+  background-color: var(--mint-light);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.result-msg {
+  margin: 1.5rem 0;
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .report-box {
-    flex: 1;
-    background: #f4f4f8;
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-    min-width: 180px;
-  }
-  
-  .report-box h4 {
-    font-size: 1rem;
-    color: #333;
-    margin-bottom: 0.5rem;
-  }
-  
-  .report-box p {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #2c3e50;
-  }
-  
-  .styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 0.95rem;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .styled-table thead {
-    background-color: #6c63ff;
-    color: white;
-    text-align: left;
-  }
-  
-  .styled-table th,
-  .styled-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .styled-table tbody tr:hover {
-    background-color: #f3f3f3;
-  }
-  
-  .scroll-table-wrapper {
-    overflow-x: auto;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    min-width: 100%;
   }
   
   .report-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+    flex-direction: column;
   }
   
   .report-actions button {
-    padding: 0.5rem 1.2rem;
-    background-color: #6c63ff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    width: 100%;
   }
   
-  .report-actions button:hover {
-    background-color: #554eda;
+  .report-card {
+    padding: 1.5rem;
   }
-  
+}

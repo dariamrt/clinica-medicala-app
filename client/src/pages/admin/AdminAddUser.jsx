@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AuthService, SpecialtyService } from "@services";
 import { useNavigate } from "react-router-dom";
 import "@styles/pages/AdminAddUser.css";
@@ -55,8 +55,9 @@ const AdminAddUser = () => {
   };
 
   return (
-    <div className="add-user-page">
-      <h2 className="add-user-title">Adaugă un utilizator</h2>
+   <div className="page-wrapper">
+      <div className="medical-page-container">
+      <h2 className="page-title">Adaugă un utilizator</h2>
 
       <form className="add-user-form" onSubmit={handleSubmit}>
         <div className="form-row">
@@ -115,6 +116,7 @@ const AdminAddUser = () => {
 
         <button type="submit">Creează utilizator</button>
       </form>
+    </div>
     </div>
   );
 };

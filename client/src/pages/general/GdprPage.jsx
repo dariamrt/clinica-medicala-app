@@ -1,89 +1,77 @@
-import React from "react";
-import { RoleBasedNavbar } from "@components";
-import "@styles/pages/GDPRPage.css";
+import { Link } from "react-router-dom";
+import "@styles/pages/TermsPage.css";
 
 const GDPRPage = () => {
   return (
-    <>
-      <RoleBasedNavbar />
-      <div className="gdpr-page">
-        <h1>Politica de Confidențialitate – Protecția Datelor (GDPR)</h1>
+    <div className="page-wrapper">
+      <div className="medical-page-container">
+        <div className="terms-card">
+          <h1>Politica de Confidențialitate – MedAria</h1>
 
-        <section>
-          <h2>1. Datele pe care le colectăm</h2>
           <p>
-            Nume, prenume, adresă de e-mail, număr de telefon, CNP, informații
-            medicale (diagnostice, rețete), date tehnice precum IP, device info.
+            Protejarea datelor personale este o prioritate pentru MedAria. Această politică descrie modul în care colectăm, utilizăm și protejăm informațiile personale ale utilizatorilor.
           </p>
-        </section>
 
-        <section>
-          <h2>2. Scopul colectării datelor</h2>
+          <h2>1. Ce date colectăm?</h2>
+          <ul>
+            <li>Nume și prenume</li>
+            <li>Adresă de e-mail și număr de telefon</li>
+            <li>CNP și alte informații identificabile</li>
+            <li>Date medicale (diagnostice, prescripții)</li>
+            <li>Date tehnice (adresă IP, tip dispozitiv)</li>
+          </ul>
+
+          <h2>2. Scopul prelucrării</h2>
           <ul>
             <li>Crearea și gestionarea conturilor</li>
-            <li>Programări și consultații medicale</li>
-            <li>Emiterea fișelor și rețetelor</li>
-            <li>Comunicări administrative</li>
+            <li>Programări, consultații și emiterea documentelor medicale</li>
+            <li>Comunicări administrative și notificări</li>
             <li>Respectarea obligațiilor legale</li>
           </ul>
-        </section>
 
-        <section>
-          <h2>3. Temeiul legal al prelucrării</h2>
+          <h2>3. Temeiul legal</h2>
           <p>
-            Consimțământul tău, executarea contractului, obligații legale sau
-            interes legitim.
+            Datele sunt prelucrate în baza consimțământului, a obligațiilor legale, a contractului cu pacientul sau a interesului legitim al clinicii.
           </p>
-        </section>
 
-        <section>
-          <h2>4. Durata stocării datelor</h2>
+          <h2>4. Durata stocării</h2>
           <p>
-            Datele se păstrează cât timp ești utilizator, respectiv conform
-            legii (ex: 5-10 ani pentru fișele medicale), apoi se șterg
-            definitiv.
+            Datele sunt păstrate pe durata relației contractuale și conform obligațiilor legale (ex. 5-10 ani pentru documentele medicale).
           </p>
-        </section>
 
-        <section>
-          <h2>5. Cui transmitem datele</h2>
+          <h2>5. Destinatarii datelor</h2>
           <p>
-            Medici autorizați, autorități legale, furnizori IT – exclusiv în
-            scopul funcționării aplicației.
+            Informațiile pot fi partajate cu medici autorizați, furnizori de servicii IT și autorități publice, exclusiv în scopuri legitime.
           </p>
-        </section>
 
-        <section>
-          <h2>6. Securitatea datelor</h2>
+          <h2>6. Măsuri de securitate</h2>
           <ul>
-            <li>Conexiuni criptate (HTTPS)</li>
-            <li>Autentificare și acces controlat</li>
-            <li>Backup-uri regulate</li>
+            <li>Criptarea datelor și conexiunilor</li>
+            <li>Control strict al accesului</li>
+            <li>Backup-uri periodice</li>
           </ul>
-        </section>
 
-        <section>
-          <h2>7. Drepturile tale</h2>
+          <h2>7. Drepturile dumneavoastră</h2>
           <ul>
-            <li>Acces, rectificare, ștergere</li>
-            <li>Restricționare și opoziție</li>
-            <li>Portabilitatea datelor</li>
-            <li>Plângere la ANSPDCP: www.dataprotection.ro</li>
+            <li>Dreptul de acces, rectificare și ștergere</li>
+            <li>Dreptul de opoziție și restricționare</li>
+            <li>Dreptul la portabilitate</li>
+            <li>Dreptul de a depune plângere la ANSPDCP: www.dataprotection.ro</li>
           </ul>
-        </section>
 
-        <section>
           <h2>8. Contact</h2>
           <p>
-            Ne poți contacta la: <br />
-            <strong>Email:</strong> contact@clinica.ro <br />
+            Pentru solicitări legate de datele personale, ne puteți contacta la:<br />
+            <strong>Email:</strong> protectie@medaria.ro<br />
             <strong>Telefon:</strong> +40 123 456 789
           </p>
-        </section>
 
-        <p className="last-updated">Ultima actualizare: aprilie 2025</p>
+          <div className="back-link">
+            <Link to="/">Înapoi la pagina principală</Link>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

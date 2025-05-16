@@ -62,9 +62,23 @@ const getPatientMedicalHistory = async (req, res) => {
         const history = await MedicalHistory.findAll({
             where: { patient_id: id },
             attributes: ["id", "diagnosis", "doctor_id", "notes", "createdAt", "updatedAt"],
+            include: {
+                model: Doctor,
+                attributes: ["first_name", "last_name"]
+            },
+            order: [["createdAt", "DESC"]]
         });
 
-        res.status(200).json(history);
+        const formattedHistory = history.map(record => ({
+            id: record.id,
+            diagnosis: record.diagnosis,
+            description: record.notes || '',
+            date: record.createdAt,
+            doctor_id: record.doctor_id,
+            doctor_name: record.Doctors_Datum ? `${record.Doctors_Datum.first_name} ${record.Doctors_Datum.last_name}` : 'Necunoscut'
+        }));
+
+        res.status(200).json(formattedHistory);
     } catch (error) {
         console.error("Error fetching medical history: ", error);
         res.status(500).json({ message: "Error fetching medical history!", error: error.message });

@@ -2,92 +2,121 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   MedicalHistoryCard,
-  PrescriptionCard
+  PatientCard
 } from "@components";
 import { PatientService } from "@services";
-import { ArrowLeft } from "lucide-react";
-import "@styles/pages/AdminPatientDetails.css";
+import { ArrowLeft, UserCheck, Clock, FileText } from "lucide-react";
+import "@styles/pages/PatientDetails.css"; 
 
 const AdminPatientDetails = () => {
   const { id } = useParams();
-  // console.log("id primit:", id);
   const navigate = useNavigate();
+  
   const [patient, setPatient] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [medicalHistory, setMedicalHistory] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const patientData = await PatientService.getPatientById(id);
+      const historyData = await PatientService.getPatientMedicalHistory(id);
+      const prescriptionsData = await PatientService.getPatientPrescriptions(id);
+      
+      setPatient(patientData);
+      
+      const sortedHistory = historyData.sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+      );
+      setMedicalHistory(sortedHistory);
+      
+      const validPrescriptions = prescriptionsData.filter((item) => {
+        try {
+          const parsed = JSON.parse(item.content);
+          return Array.isArray(parsed?.medicamente);
+        } catch {
+          return false;
+        }
+      });
+      setPrescriptions(validPrescriptions);
+    } catch (err) {
+      console.error("Eroare la încărcare:", err);
+      setError("Nu s-au putut încărca datele pacientului. Vă rugăm încercați din nou.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const p = await PatientService.getPatientById(id);
-        const h = await PatientService.getPatientMedicalHistory(id);
-        const r = await PatientService.getPatientPrescriptions(id);
-        setPatient(p);
-        // console.log("pacient returnat:", p);
-        setHistory(h);
-        setPrescriptions(r);
-      } catch (err) {
-        console.error("Eroare la incarcare:", err);
-      }
-    };
-
     fetchData();
   }, [id]);
 
+  const handleBack = () => {
+    navigate("/admin/patients");
+  };
+
   return (
-    <div className="admin-patient-details-page">
-      <h2 className="page-title">Detalii pacient</h2>
-      {!patient && <p>Se încarcă detalii sau pacientul nu a fost găsit.</p>}
+    <div className="page-wrapper">
+      <div className="medical-page-container">
+        <h2 className="page-title">
+          <UserCheck size={24} className="page-title-icon" />
+          Detalii pacient
+        </h2>
 
-      {patient && (
-        <div className="patient-info-card">
-          <p><strong>Nume:</strong> {patient.first_name} {patient.last_name}</p>
-          <p><strong>Email:</strong> {patient.email || "N/A"}</p>
-          <p><strong>Telefon:</strong> {patient.phone_number || "N/A"}</p>
-          <p><strong>Adresă:</strong> {patient.address || "N/A"}</p>
-          <p><strong>CNP:</strong> {patient.CNP || "N/A"}</p>
-          <p><strong>Sex:</strong> {patient.gender || "N/A"}</p>
-        </div>
-      )}
-
-      <div className="section">
-        <h3>Istoric medical</h3>
-        {history.length === 0 ? (
-          <p className="empty-msg">Nicio fișă medicală.</p>
-        ) : (
-          <div className="card-list">
-            {history.map((item) => (
-              <MedicalHistoryCard key={item.id} record={item} />
-            ))}
+        {error && (
+          <div className="error-container">
+            <p className="error-message">{error}</p>
+            <button className="secondary-btn" onClick={fetchData}>Reîncarcă</button>
           </div>
         )}
-      </div>
 
-      <div className="section">
-        <h3>Rețete</h3>
-        {prescriptions.length === 0 ? (
-          <p className="empty-msg">Nicio rețetă disponibilă.</p>
+        {isLoading ? (
+          <div className="loading-indicator">Se încarcă...</div>
         ) : (
-          <div className="card-list">
-            {prescriptions
-              .filter((item) => {
-                try {
-                  const parsed = JSON.parse(item.content);
-                  return Array.isArray(parsed?.medicamente);
-                } catch {
-                  return false;
-                }
-              })
-              .map((item) => (
-                <PrescriptionCard key={item.id} content={item.content} />
-            ))}
-          </div>
+          <>
+            <div className="patient-details-content">
+              <div className="left-panel">
+                {patient && (
+                  <PatientCard patient={patient} detailView={true} />
+                )}
+              </div>
+
+              <div className="right-panel">
+                <div className="panel-header">
+                  <h3>
+                    <Clock size={18} className="panel-header-icon" />
+                    Fișe medicale
+                  </h3>
+                </div>
+
+                {medicalHistory.length === 0 ? (
+                  <div className="no-records">
+                    Nu există fișe medicale pentru acest pacient.
+                  </div>
+                ) : (
+                  <div className="medical-preview">
+                    {medicalHistory.map((record) => (
+                      <MedicalHistoryCard
+                        key={record.id}
+                        record={record}
+                        userRole="admin"
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button className="back-btn" onClick={handleBack}>
+              <ArrowLeft size={20} />
+              <span>Înapoi la lista de pacienți</span>
+            </button>
+          </>
         )}
       </div>
-
-      <button className="back-btn" onClick={() => navigate("/admin/patients")}>
-        <ArrowLeft size={18} /> Înapoi
-      </button>
     </div>
   );
 };

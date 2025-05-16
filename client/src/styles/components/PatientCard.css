@@ -1,29 +1,201 @@
-.patient-row {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  padding: 1rem 1.2rem;
-  margin: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-family: "Segoe UI", sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.patient-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid var(--blue);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.patient-row:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(108, 99, 255, 0.15);
-  background-color: #fafaff;
+.patient-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: var(--mint-light);
+  border-radius: 0 0 0 80px;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.patient-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.patient-info-row {
+  display: flex;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(74, 144, 226, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.patient-info-row:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.info-label {
+  flex: 0 0 110px;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.info-value {
+  flex: 1;
+  color: #2c3e50;
+  font-weight: 400;
+}
+
+/* Styling for list view */
+.patient-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 18px 20px;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--blue-light);
+  font-size: 0.95rem;
+  background-color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.patient-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.patient-row:hover::before {
+  background-color: var(--mint);
 }
 
 .patient-row span {
-  font-size: 0.95rem;
-  color: #333;
+  padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #2d3748;
 }
 
-.patient-row span strong {
-  font-weight: 600;
-  color: #6c63ff;
+.patient-row:last-child {
+  border-bottom: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.patient-row:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.patient-row:hover {
+  background-color: var(--mint-light);
+  cursor: pointer;
+  transform: translateY(-2px);
+}
+
+/* Header row styling */
+.patients-list-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 12px 20px;
+  background-color: var(--blue);
+  color: white;
+  font-weight: 500;
+  border-radius: 12px 12px 0 0;
+  font-size: 0.9rem;
+}
+
+.patients-list-header span {
+  padding: 0 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .patient-card {
+    padding: 1.2rem;
+    border-left-width: 3px;
+  }
+
+  .patient-info-row {
+    flex-direction: column;
+    padding-bottom: 0.8rem;
+  }
+
+  .info-label {
+    margin-bottom: 0.3rem;
+  }
+
+  .patient-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border-bottom: 1px solid var(--blue-light);
+    position: relative;
+    background-color: var(--gray-light);
+  }
+  
+  .patient-row::after {
+    content: "›";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--blue);
+  }
+  
+  .patient-row span {
+    padding: 0;
+    position: relative;
+    padding-left: 100px;
+    min-height: 24px;
+  }
+  
+  .patient-row span:nth-child(1)::before {
+    content: "Nume: ";
+    font-weight: 500;
+    color: var(--blue);
+    position: absolute;
+    left: 0;
+  }
+  
+  .patient-row span:nth-child(2)::before {
+    content: "Prenume: ";
+    font-weight: 500;
+    color: var(--blue);
+    position: absolute;
+    left: 0;
+  }
+  
+  .patient-row span:nth-child(3)::before {
+    content: "Email: ";
+    font-weight: 500;
+    color: var(--blue);
+    position: absolute;
+    left: 0;
+  }
+  
+  .patient-row span:nth-child(4)::before {
+    content: "Telefon: ";
+    font-weight: 500;
+    color: var(--blue);
+    position: absolute;
+    left: 0;
+  }
+  
+  .patients-list-header {
+    display: none;
+  }
 }

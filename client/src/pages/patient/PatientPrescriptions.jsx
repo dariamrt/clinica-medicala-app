@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { PatientService } from "@services";
 import { ArrowLeft } from "lucide-react";
@@ -30,7 +31,13 @@ const PatientPrescriptions = () => {
         ) : (
           <div className="medical-list">
             {prescriptions.map((item) => (
-              <PatientPrescriptionCard key={item.id} content={item.content} createdAt={item.createdAt} />
+              <PatientPrescriptionCard 
+                key={item.id} 
+                content={item.content} 
+                createdAt={item.createdAt}
+                doctorName={item.doctorName}
+                appointmentDate={item.appointmentDate}
+              />
             ))}
           </div>
         )}

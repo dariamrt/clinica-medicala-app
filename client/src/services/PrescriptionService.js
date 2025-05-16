@@ -10,3 +10,12 @@ export const addPrescription = async (medicalHistoryId, data) => {
   if (!res.ok) throw new Error("Eroare la adaugarea retetei.");
   return await res.json();
 };
+
+export const getPrescriptionsByMedicalHistoryId = async (medicalHistoryId) => {
+  const res = await fetch(`${API_URL}/medical-history/${medicalHistoryId}`, {
+    method: "GET",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Eroare la încărcarea rețetelor.");
+  return await res.json();
+};

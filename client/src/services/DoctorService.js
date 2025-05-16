@@ -73,3 +73,15 @@ export const getAllDoctors = async () => {
   return await res.json();
 };
 
+export const getDoctorById = async (doctorId) => {
+  const res = await fetch(`${API_URL}/${doctorId}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Eroare la preluarea datelor doctorului.");
+  }
+
+  return await res.json();
+};

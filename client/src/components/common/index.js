@@ -10,3 +10,4 @@ export { default as PrescriptionCard } from "./PrescriptionCard";
 export { default as RoleBasedNavbar } from "./RoleBasedNavbar";
 export { default as FaqItem } from "./FaqItem";
 export { default as Footer } from "./Footer";
+export { default as DeleteConfirmModal } from "./DeleteConfirmModal";

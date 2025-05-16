@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "@styles/pages/AppointmentsCreate.css";
+import { AppointmentSuccessModal } from "@components";
 
 import * as service from "@services";
 
@@ -18,6 +19,9 @@ const AppointmentsCreate = () => {
   const [selectedTimeId, setSelectedTimeId] = useState(null);
   const [reimbursedByCAS, setReimbursedByCAS] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [appointmentInfo, setAppointmentInfo] = useState(null);
+
 
   useEffect(() => {
     const fetchSpecialties = async () => {
@@ -72,7 +76,14 @@ const AppointmentsCreate = () => {
         availability_id: selectedTimeId,
         reimbursed_by_CAS: reimbursedByCAS,
       });
-      navigate("/patient/appointments/success");
+
+      const time = availability.find((item) => item.id === selectedTimeId)?.start_time.slice(0, 5);
+      setAppointmentInfo({
+        date: selectedDate,
+        time,
+        reimbursed: reimbursedByCAS,
+      });
+      setSuccessModal(true);
     } catch (error) {
       console.error("Eroare la programare:", error);
     }
@@ -190,6 +201,20 @@ const AppointmentsCreate = () => {
             </div>
           </div>
         )}
+
+        {successModal && appointmentInfo && (
+          <AppointmentSuccessModal
+            date={appointmentInfo.date}
+            time={appointmentInfo.time}
+            reimbursed={appointmentInfo.reimbursed}
+            onClose={() => setSuccessModal(false)}
+            onViewAppointments={() => {
+              setSuccessModal(false);
+              navigate("/patient/appointments");
+            }}
+          />
+        )}
+
       </div>
   </div>
   );

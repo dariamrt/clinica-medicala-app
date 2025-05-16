@@ -44,3 +44,25 @@ export const deleteAvailability = async (id) => {
 
   if (!res.ok) throw new Error("Eroare la stergerea disponibilitatilor.");
 };
+
+export const getAllAvailabilities = async () => {
+  const res = await fetch(`${API_URL}/all`, {
+    method: "GET",
+    credentials: "include",
+  });
+  
+  if (!res.ok) throw new Error("Eroare la obtinerea tuturor disponibilitatilor.");
+  return await res.json();
+};
+
+export const updateAvailability = async (id, data) => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error("Eroare la actualizarea disponibilitatii.");
+  return await res.json();
+};

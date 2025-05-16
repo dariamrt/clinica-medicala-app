@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MedicalHistoryCard, PatientCard, AddMedicalHistoryModal, AddPrescriptionModal } from "@components";
 import { PatientService, AuthService } from "@services";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, UserCheck, FilePlus, Clock } from "lucide-react";
 import "@styles/pages/PatientDetails.css";
 
 const PatientDetails = () => {
@@ -15,23 +15,33 @@ const PatientDetails = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const user = await AuthService.getCurrentUser();
+      setUserRole(user.role);
+
+      const patientData = await PatientService.getPatientById(id);
+      const historyData = await PatientService.getPatientMedicalHistory(id);
+
+      setPatient(patientData);
+      const sortedHistory = historyData.sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+      );
+      setMedicalHistory(sortedHistory.slice(0, 3));
+    } catch (error) {
+      console.error("Eroare la încărcare detalii pacient:", error);
+      setError("Nu s-au putut încărca datele pacientului. Vă rugăm încercați din nou.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const user = await AuthService.getCurrentUser();
-        setUserRole(user.role);
-
-        const patientData = await PatientService.getPatientById(id);
-        const historyData = await PatientService.getPatientMedicalHistory(id);
-
-        setPatient(patientData);
-        setMedicalHistory(historyData.slice(0, 3));
-      } catch (error) {
-        console.error("Eroare la încărcare detalii pacient:", error);
-      }
-    };
-
     fetchData();
   }, [id]);
 
@@ -48,57 +58,93 @@ const PatientDetails = () => {
     setShowPrescriptionModal(true);
   };
 
+  const handleModalSuccess = () => {
+    fetchData(); 
+  };
+
   return (
-    <>
-      <div className="patient-details-container">
-        <div className="patient-details-header">
-        <h2 className="page-title">Detalii pacient</h2>
-        </div>
+    <div className="page-wrapper">
+       <div className="medical-page-container">
+        <h2 className="page-title">
+          <UserCheck size={24} className="page-title-icon" />
+          Detalii pacient
+        </h2>
 
-        <div className="patient-details-content">
-          <div className="left-panel">
-            {patient && <PatientCard patient={patient} />}
-            {userRole === "doctor" && (
-              <button className="primary-btn" onClick={() => setShowHistoryModal(true)}>
-                Adaugă fișă medicală
-              </button>
-            )}
+        {error && (
+          <div className="error-container">
+            <p className="error-message">{error}</p>
+            <button className="secondary-btn" onClick={fetchData}>Reîncarcă</button>
           </div>
+        )}
 
-          <div className="right-panel">
-            <h3>Fișe medicale recente</h3>
-            {medicalHistory.length === 0 ? (
-              <p>Nu există fișe medicale.</p>
-            ) : (
-              <>
-                <div className="medical-preview">
-                  {medicalHistory.map((record) => (
-                    <MedicalHistoryCard
-                      key={record.id}
-                      record={record}
-                      userRole={userRole}
-                      onAddPrescription={handleAddPrescription}
-                    />
-                  ))}
+        {isLoading ? (
+          <div className="loading-indicator">Se încarcă...</div>
+        ) : (
+          <>
+            <div className="patient-details-content">
+              <div className="left-panel">
+                {patient && (
+                  <>
+                    <PatientCard patient={patient} detailView={true} />
+                    {userRole === "doctor" && (
+                      <button 
+                        className="primary-btn add-history-btn" 
+                        onClick={() => setShowHistoryModal(true)}
+                      >
+                        <FilePlus size={18} />
+                        Adaugă fișă medicală
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div className="right-panel">
+                <div className="panel-header">
+                  <h3>
+                    <Clock size={18} className="panel-header-icon" />
+                    Fișe medicale recente
+                  </h3>
+                  
+                  {medicalHistory.length > 0 && (
+                    <button className="secondary-btn see-all-btn" onClick={handleSeeAll}>
+                      Vezi toate
+                    </button>
+                  )}
                 </div>
-                <button className="secondary-btn" onClick={handleSeeAll}>
-                  Vezi toate
-                </button>
-              </>
-            )}
-          </div>
-        </div>
 
-        <div className="back-button" onClick={handleBack}>
-          <ArrowLeft size={20} />
-          <span>Înapoi</span>
-        </div>
+                {medicalHistory.length === 0 ? (
+                  <div className="no-records">
+                    Nu există fișe medicale pentru acest pacient.
+                  </div>
+                ) : (
+                  <div className="medical-preview">
+                    {medicalHistory.map((record) => (
+                      <MedicalHistoryCard
+                        key={record.id}
+                        record={record}
+                        userRole={userRole}
+                        onAddPrescription={handleAddPrescription}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button className="back-btn" onClick={handleBack}>
+              <ArrowLeft size={20} />
+              <span>Înapoi la lista de pacienți</span>
+            </button>
+          </>
+        )}
       </div>
 
       {showHistoryModal && (
         <AddMedicalHistoryModal
           patientId={id}
           onClose={() => setShowHistoryModal(false)}
+          onSuccess={handleModalSuccess}
         />
       )}
 
@@ -106,9 +152,10 @@ const PatientDetails = () => {
         <AddPrescriptionModal
           medicalHistoryId={selectedRecordId}
           onClose={() => setShowPrescriptionModal(false)}
+          onSuccess={handleModalSuccess}
         />
       )}
-    </>
+    </div>
   );
 };
 

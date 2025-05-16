@@ -12,7 +12,7 @@ const Footer = () => {
         <a href="https://anpc.ro/" target="_blank" rel="noopener noreferrer">ANPC</a>
       </div>
       <div className="footer-credits">
-        <p>© Clinica Medicală</p>
+        <p>© Clinica MedAria SA </p>
         <p>Dezvoltat de Daria Mireștean</p>
       </div>
     </footer>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SpecialtyService } from "@services";
 import { useNavigate } from "react-router-dom";
 import "@styles/pages/ManageSpecialties.css";
@@ -44,7 +44,8 @@ const ManageSpecialties = () => {
   };
 
   return (
-    <div className="manage-specialties">
+    <div className="page-wrapper">
+      <div className="medical-page-container">
       <h2 className="page-title">Gestionare specializări</h2>
 
       <div className="specialty-list">
@@ -86,6 +87,7 @@ const ManageSpecialties = () => {
             )}
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

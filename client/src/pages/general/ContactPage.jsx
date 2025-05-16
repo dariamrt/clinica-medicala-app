@@ -35,7 +35,7 @@ const ContactPage = () => {
         <div className="contact-content">
           <div className="contact-details-card">
             <h2>Contact</h2>
-            <p><strong>Email:</strong> contact@clinicamedicala.ro</p>
+            <p><strong>Email:</strong> contact@medaria.ro</p>
             <p><strong>Telefon:</strong> 0740 123 456</p>
             <p><strong>Adresă:</strong> Șoseaua Pavel D. Kiseleff 2, București</p>
             <iframe

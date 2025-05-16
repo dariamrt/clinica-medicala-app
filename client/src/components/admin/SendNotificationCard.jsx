@@ -7,12 +7,15 @@ const SendNotificationCard = () => {
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const allUsers = await UserService.getAllUsers();
         setUsers(allUsers);
+        setFilteredUsers(allUsers);
       } catch (error) {
         console.error("Eroare la obtinerea userilor:", error);
       }
@@ -20,6 +23,17 @@ const SendNotificationCard = () => {
 
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    const lowerTerm = searchTerm.toLowerCase();
+    setFilteredUsers(
+      users.filter(
+        (u) =>
+          `${u.first_name} ${u.last_name}`.toLowerCase().includes(lowerTerm) ||
+          u.email.toLowerCase().includes(lowerTerm)
+      )
+    );
+  }, [searchTerm, users]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,6 +60,12 @@ const SendNotificationCard = () => {
     <div className="notification-card">
       <h3>Trimite notificare</h3>
       <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Caută numele sau emailul..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         <label>Utilizatori:</label>
         <select
           multiple
@@ -54,7 +74,7 @@ const SendNotificationCard = () => {
             setSelectedUserIds(Array.from(e.target.selectedOptions, (opt) => opt.value))
           }
         >
-          {users.map((u) => (
+        {filteredUsers.map((u) => (
             <option key={u.id} value={u.id}>
               {u.first_name} {u.last_name} ({u.email})
             </option>

@@ -1,64 +1,319 @@
-.manage-doctors-page {
-    padding: 2rem;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    max-width: 1100px;
-    margin: 2rem auto;
+.doctors-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.add-doctor-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--mint);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(142, 209, 182, 0.3);
+}
+
+.add-doctor-btn:hover {
+  background-color: #7bc0a3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142, 209, 182, 0.4);
+}
+
+.search-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  max-width: 480px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.search-container:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+}
+
+.search-container svg {
+  color: #9ca3af;
+  margin-right: 0.75rem;
+  min-width: 18px;
+}
+
+.search-container input {
+  border: none;
+  padding: 0;
+  font-size: 0.95rem;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  box-shadow: none;
+}
+
+.doctors-count {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.doctors-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.doctors-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.doctors-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.doctors-table th,
+.doctors-table td {
+  padding: 1rem;
+  text-align: left;
+}
+
+.doctors-table th {
+  background-color: var(--lavender);
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.doctors-table tr {
+  border-bottom: 1px solid #edf2f7;
+  transition: background-color 0.2s ease;
+}
+
+.doctors-table tr:last-child {
+  border-bottom: none;
+}
+
+.doctors-table tr:hover {
+  background-color: var(--mint-light);
+}
+
+.doctor-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.specialty-badge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  background-color: var(--blue-light);
+  color: var(--blue);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.doctor-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.doctor-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.edit-btn {
+  background-color: var(--blue);
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #357ABD;
+  transform: translateY(-1px);
+}
+
+.availability-btn {
+  background-color: var(--yellow);
+  color: #333;
+}
+
+.availability-btn:hover {
+  background-color: #e5c74e;
+  transform: translateY(-1px);
+}
+
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #64748b;
+  gap: 1rem;
+}
+
+.empty-state svg {
+  color: var(--blue);
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state span {
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.reset-search {
+  margin-top: 0.5rem;
+  background: none;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.reset-search:hover {
+  background-color: var(--blue);
+  color: white;
+}
+
+.spinner {
+  animation: rotate 2s linear infinite;
+  width: 40px;
+  height: 40px;
+}
+
+.spinner .path {
+  stroke: var(--blue);
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+@media (max-width: 992px) {
+  .search-section {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
-  .manage-doctors-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+  .search-container {
+    max-width: 100%;
   }
   
-  .manage-doctors-header h2 {
-    color: #8e44ad;
+  .doctor-actions span {
+    display: none;
   }
   
-  .doctors-table table {
+  .doctor-actions button {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    text-align: center;
+  }
+  
+  .doctors-header {
+    justify-content: center;
+  }
+  
+  .add-doctor-btn {
     width: 100%;
-    border-collapse: collapse;
+    justify-content: center;
   }
   
-  .doctors-table th,
-  .doctors-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-  }
-  
-  .doctors-table th {
-    background-color: #f5f5f5;
-    color: #333;
+  .doctors-table th:nth-child(3),
+  .doctors-table td:nth-child(3) {
+    display: none;
   }
   
   .doctor-actions {
-    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
   }
   
   .doctor-actions button {
-    padding: 6px 12px;
-    border-radius: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .doctors-table-container {
+    border-radius: 8px;
+  }
+  
+  .doctors-table th:nth-child(2),
+  .doctors-table td:nth-child(2) {
+    display: none;
+  }
+  
+  .doctors-table th,
+  .doctors-table td {
+    padding: 0.75rem;
     font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    transition: 0.3s;
   }
-  
-  .doctor-actions button:hover {
-    opacity: 0.9;
-  }
-  
-  .doctor-actions .btn-secondary {
-    background-color: #e67e22;
-    color: white;
-  }
-  
-  .doctor-actions .btn-secondary:hover {
-    background-color: #d35400;
-  }
-  
+}

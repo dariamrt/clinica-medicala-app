@@ -1,60 +1,65 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import "@styles/pages/TermsPage.css";
 
 const TermsAndConditions = () => {
   return (
-    <div className="terms-container">
-      <div className="terms-card">
-        <h1>Termeni și Condiții</h1>
-        <p>
-          Bine ați venit la clinica noastră! Vă rugăm să citiți cu atenție acești termeni și condiții înainte de a utiliza serviciile noastre.
-        </p>
+    <div className="page-wrapper">
+      <div className="medical-page-container">
+        <div className="terms-card">
+          <h1>Termeni și Condiții – MedAria</h1>
 
-        <h2>1. Protecția datelor personale (GDPR)</h2>
-        <p>
-          Conform Regulamentului General privind Protecția Datelor (GDPR) - UE 2016/679, clinică noastră colectează și prelucrează datele cu caracter personal în scopul furnizării serviciilor medicale, gestionării programărilor și asigurării unei experiențe sigure pacienților noștri.
-        </p>
+          <p>
+            Vă mulțumim că ați ales clinica MedAria. Vă rugăm să citiți cu atenție termenii și condițiile de mai jos, care guvernează utilizarea serviciilor noastre.
+          </p>
 
-        <h2>2. Ce date colectăm?</h2>
-        <p>
-          Colectăm date precum: numele, prenumele, adresa de email, numărul de telefon, date medicale relevante pentru consultațiile efectuate.
-        </p>
+          <h2>1. Protecția datelor personale</h2>
+          <p>
+            În conformitate cu Regulamentul General privind Protecția Datelor (GDPR – UE 2016/679), MedAria colectează și prelucrează datele dumneavoastră personale exclusiv în scopuri medicale și administrative.
+          </p>
 
-        <h2>3. Cum utilizăm aceste date?</h2>
-        <ul>
-          <li>Pentru a vă crea și gestiona contul;</li>
-          <li>Pentru programarea consultațiilor medicale;</li>
-          <li>Pentru comunicări legate de programările dumneavoastră;</li>
-          <li>Pentru îmbunătățirea serviciilor oferite.</li>
-        </ul>
+          <h2>2. Datele pe care le colectăm</h2>
+          <p>
+            MedAria colectează următoarele date:
+          </p>
+          <ul>
+            <li>Nume și prenume</li>
+            <li>Adresă de e-mail și număr de telefon</li>
+            <li>Date medicale relevante pentru consultații</li>
+          </ul>
 
-        <h2>4. Drepturile utilizatorului</h2>
-        <p>
-          Conform GDPR, aveți următoarele drepturi:
-        </p>
-        <ul>
-          <li>Dreptul de acces la datele personale;</li>
-          <li>Dreptul de rectificare a datelor incorecte;</li>
-          <li>Dreptul de ștergere a datelor ("dreptul de a fi uitat");</li>
-          <li>Dreptul de restricționare a prelucrării;</li>
-          <li>Dreptul de a vă opune prelucrării datelor în scopuri de marketing direct;</li>
-          <li>Dreptul la portabilitatea datelor.</li>
-        </ul>
+          <h2>3. Scopul utilizării datelor</h2>
+          <ul>
+            <li>Gestionarea contului dumneavoastră în platformă</li>
+            <li>Programarea consultațiilor medicale</li>
+            <li>Comunicări privind statusul programărilor</li>
+            <li>Îmbunătățirea calității serviciilor oferite</li>
+          </ul>
 
-        <h2>5. Cum protejăm datele?</h2>
-        <p>
-          Clinică noastră implementează măsuri de securitate avansate pentru protecția datelor personale împotriva accesului neautorizat, utilizării abuzive sau divulgării acestora.
-        </p>
+          <h2>4. Drepturile dumneavoastră</h2>
+          <p>În conformitate cu legislația în vigoare, aveți dreptul de:</p>
+          <ul>
+            <li>Acces la datele personale</li>
+            <li>Rectificare a datelor incorecte</li>
+            <li>Ștergere a datelor („dreptul de a fi uitat”)</li>
+            <li>Restricționare a prelucrării</li>
+            <li>Opoziție față de prelucrarea în scop de marketing</li>
+            <li>Portabilitatea datelor</li>
+          </ul>
 
-        <h2>6. Contact</h2>
-        <p>
-          Pentru orice întrebări sau solicitări privind protecția datelor, ne puteți contacta la <strong>email@clinica.ro</strong>.
-        </p>
+          <h2>5. Securitatea datelor</h2>
+          <p>
+            MedAria aplică măsuri tehnice și organizatorice pentru a asigura protecția datelor împotriva accesului neautorizat sau pierderii accidentale.
+          </p>
 
-        <p className="back-link">
-          <Link to="/">Înapoi la pagina principală</Link>
-        </p>
+          <h2>6. Contact</h2>
+          <p>
+            Pentru întrebări legate de protecția datelor, ne puteți contacta la <strong>protectie@medaria.ro</strong>.
+          </p>
+
+          <div className="back-link">
+            <Link to="/">Înapoi la pagina principală</Link>
+          </div>
+        </div>
       </div>
     </div>
   );
