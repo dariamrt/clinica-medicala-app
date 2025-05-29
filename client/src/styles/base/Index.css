@@ -172,6 +172,11 @@ select:focus {
   width: 100%;
 }
 
+.medical-list {
+  flex-direction: column;
+  gap: 1rem;
+}
+
 @media (max-width: 768px) {
   .page-title {
     font-size: 1.4rem;

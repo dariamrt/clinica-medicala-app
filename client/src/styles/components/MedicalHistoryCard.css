@@ -7,6 +7,7 @@
   transition: transform 0.2s ease;
   color: #2c3e50;
   font-family: var(--font-body);
+  margin: 2rem;
 }
 
 .medical-history-card:hover {

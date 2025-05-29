@@ -3,7 +3,6 @@ import { PatientMedicalHistoryCard } from "@components";
 import { PatientService } from "@services";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "@styles/pages/MedicalShared.css";
 
 const PatientMedicalHistory = () => {
   const [records, setRecords] = useState([]);

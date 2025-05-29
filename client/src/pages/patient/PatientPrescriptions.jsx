@@ -4,7 +4,6 @@ import { PatientService } from "@services";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PatientPrescriptionCard } from "@components";
-import "@styles/pages/MedicalShared.css";
 
 const PatientPrescriptions = () => {
   const [prescriptions, setPrescriptions] = useState([]);
