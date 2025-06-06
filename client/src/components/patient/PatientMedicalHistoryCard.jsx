@@ -2,7 +2,6 @@ import React from "react";
 import "@styles/components/MedicalHistoryCard.css";
 
 const PatientMedicalHistoryCard = ({ record, onAddPrescription, userRole }) => {
-  // fallback robust pentru prescription.content (string sau object)
   let prescription = record.Prescription?.content;
   try {
     prescription = typeof prescription === "string" ? JSON.parse(prescription) : prescription;
@@ -10,6 +9,7 @@ const PatientMedicalHistoryCard = ({ record, onAddPrescription, userRole }) => {
     prescription = null;
   }
 
+  console.log(record)
   const doctorName =
     record.Doctor?.first_name && record.Doctor?.last_name
       ? `${record.Doctor.first_name} ${record.Doctor.last_name}`

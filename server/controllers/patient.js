@@ -253,22 +253,35 @@ const getMyMedicalHistory = async (req, res) => {
 
 
 const getMyPrescriptions = async (req, res) => {
-    try {
-      const patientId = req.user.id;
-  
-      const prescriptions = await Prescription.findAll({
-        include: {
-          model: MedicalHistory,
-          where: { patient_id: patientId },
-          attributes: ["id", "diagnosis", "doctor_id"]
-        }
-      });
-  
-      res.status(200).json(prescriptions);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching your prescriptions." });
-    }
-  };
+  try {
+    const patientId = req.user.id;
+
+    const prescriptions = await Prescription.findAll({
+      include: {
+        model: MedicalHistory,
+        where: { patient_id: patientId },
+        attributes: ["id", "diagnosis", "doctor_id"],
+        include: [
+          {
+            model: Doctor,
+            attributes: ["first_name", "last_name"]
+          },
+          {
+            model: Patient,
+            attributes: ["first_name", "last_name", "address", "CNP"]
+          }
+        ]
+      },
+      order: [["createdAt", "DESC"]]
+    });
+
+    res.status(200).json(prescriptions);
+  } catch (error) {
+    console.error("Error fetching prescriptions:", error);
+    res.status(500).json({ message: "Error fetching your prescriptions.", error: error.message });
+  }
+};
+
   
 module.exports = { 
     getAllPatients, 

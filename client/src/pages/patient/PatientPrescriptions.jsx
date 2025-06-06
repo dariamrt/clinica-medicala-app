@@ -32,6 +32,7 @@ const PatientPrescriptions = () => {
             {prescriptions.map((item) => (
               <PatientPrescriptionCard 
                 key={item.id} 
+                prescription={item} 
                 content={item.content} 
                 createdAt={item.createdAt}
                 doctorName={item.doctorName}

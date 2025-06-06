@@ -1,36 +1,9 @@
+import { jsPDF } from "jspdf";
 import "@styles/components/PrescriptionCard.css";
 import { Download, FileText, Calendar, User, Pill } from "lucide-react";
 
-const PatientPrescriptionCard = ({ prescription, content, createdAt, doctorName, appointmentDate }) => {
+const PatientPrescriptionCard = ({ prescription, content, createdAt, appointmentDate }) => {
   let parsed;
-
-  const getDoctorName = () => {
-    if (doctorName) return doctorName;
-    
-    if (prescription) {
-      if (prescription.Doctors_Datum?.first_name && prescription.Doctors_Datum?.last_name) {
-        return `${prescription.Doctors_Datum.first_name} ${prescription.Doctors_Datum.last_name}`;
-      }
-      
-      if (prescription.doctor_name) return prescription.doctor_name;
-      if (prescription.doctor && prescription.doctor.name) return prescription.doctor.name;
-      if (prescription.Doctor && prescription.Doctor.first_name && prescription.Doctor.last_name) {
-        return `${prescription.Doctor.first_name} ${prescription.Doctor.last_name}`;
-      }
-      
-      if (prescription.MedicalHistory) {
-        if (prescription.MedicalHistory.Doctors_Datum?.first_name && prescription.MedicalHistory.Doctors_Datum?.last_name) {
-          return `${prescription.MedicalHistory.Doctors_Datum.first_name} ${prescription.MedicalHistory.Doctors_Datum.last_name}`;
-        }
-        if (prescription.MedicalHistory.doctor_name) return prescription.MedicalHistory.doctor_name;
-        if (prescription.MedicalHistory.Doctor && prescription.MedicalHistory.Doctor.first_name && prescription.MedicalHistory.Doctor.last_name) {
-          return `${prescription.MedicalHistory.Doctor.first_name} ${prescription.MedicalHistory.Doctor.last_name}`;
-        }
-      }
-    }
-    
-    return 'Necunoscut';
-  };
 
   try {
     parsed = typeof content === "string" ? JSON.parse(content) : content;
@@ -42,6 +15,22 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, doctorName,
     return <div className="prescription-card">Conținut invalid</div>;
   }
 
+  const doctor = prescription?.Medical_History?.Doctors_Datum;
+  const doctorName =
+    doctor?.first_name && doctor?.last_name
+      ? `${doctor.first_name} ${doctor.last_name}`
+      : "Necunoscut";
+
+  const pacient = prescription?.Medical_History?.Patients_Datum;
+  const pacientName =
+    pacient?.first_name && pacient?.last_name
+      ? `${pacient.first_name} ${pacient.last_name}`
+      : "Necunoscut";
+
+  const address = pacient?.address || "Nespecificată";
+  const cnp = pacient?.CNP || "Nespecificat";
+  const idPrescripiton = prescription?.id || "N/A";
+
   const medicamente = Array.isArray(parsed.meds)
     ? parsed.meds.join(", ")
     : parsed.meds || "Nespecificat";
@@ -49,32 +38,52 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, doctorName,
   const instructiuni = parsed.instructions || "Nespecificat";
 
   const handleDownloadPDF = () => {
-    const pdfContent = `
-REȚETĂ MEDICALĂ
+    const pdf = new jsPDF();
+    pdf.setFont("courier", "normal");
+    pdf.setFontSize(12);
 
-Doctor: ${doctorName || "Nespecificat"}
-Data programării: ${appointmentDate ? new Date(appointmentDate).toLocaleDateString("ro-RO") : "Nespecificată"}
-Data emiterii: ${new Date(createdAt).toLocaleDateString("ro-RO")}
+    const lineHeight = 8;
+    let y = 20;
 
-MEDICAMENTE PRESCRISE:
-${medicamente}
+    pdf.text("Clinica MedAria", 105, y, { align: "center" });
+    y += lineHeight;
+    pdf.text("Șoseaua Pavel D. Kiseleff 2, Sector 1, București", 105, y, { align: "center" });
+    y += lineHeight;
+    pdf.text("Tel: (+40) 740 123 456", 105, y, { align: "center" });
+    y += lineHeight * 2;
 
-INSTRUCȚIUNI:
-${instructiuni}
+    pdf.text(`Nume și prenume: ${pacientName}`, 10, y);
+    y += lineHeight;
+    pdf.text(`CNP: ${cnp}`, 10, y);
+    y += lineHeight;
+    pdf.text(`Adresă: ${address}`, 10, y);
+    y += lineHeight;
+    pdf.text(`Nr. fișă: ${idPrescripiton}`, 10, y);
+    y += lineHeight;
 
----
-Această rețetă a fost generată electronic.
-    `.trim();
+    pdf.text(`Diagnostic: ${prescription?.Medical_History?.diagnosis || "Nespecificat"}`, 10, y);
+    y += lineHeight * 2;
 
-    const blob = new Blob([pdfContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `reteta-${new Date(createdAt).toLocaleDateString("ro-RO").replace(/\./g, '-')}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    pdf.text("Rp./", 10, y);
+    y += lineHeight;
+
+    const medList = medicamente.split(", ");
+    medList.forEach(med => {
+      pdf.text(`• ${med}`, 15, y);
+      y += lineHeight;
+    });
+
+    y += lineHeight;
+    pdf.text(`Instrucțiuni: ${instructiuni}`, 10, y);
+    y += lineHeight * 3;
+
+    pdf.text("Semnătura și parafa medicului", 150, y);
+    y += lineHeight * 2;
+
+    pdf.text(`Data: ${new Date(createdAt).toLocaleDateString("ro-RO")}`, 10, y);
+
+    const fileName = `reteta-${new Date(createdAt).toLocaleDateString("ro-RO").replace(/\./g, '-')}.pdf`;
+    pdf.save(fileName);
   };
 
   return (
@@ -85,12 +94,16 @@ Această rețetă a fost generată electronic.
         </div>
         <h3>Rețetă Medicală</h3>
       </div>
-      
+
       <div className="prescription-info">
         <div className="info-row">
           <div className="info-item">
             <User size={18} />
-            <span><strong>Doctor:</strong> Dr. {getDoctorName()}</span>
+            <span><strong>Doctor:</strong> Dr. {doctorName}</span>
+          </div>
+          <div className="info-item">
+            <User size={18} />
+            <span><strong>Pacient:</strong> {pacientName}</span>
           </div>
           {appointmentDate && (
             <div className="info-item">
@@ -99,7 +112,7 @@ Această rețetă a fost generată electronic.
             </div>
           )}
         </div>
-        
+
         <div className="info-item">
           <Calendar size={18} />
           <span><strong>Data emiterii:</strong> {new Date(createdAt).toLocaleDateString("ro-RO")}</span>
