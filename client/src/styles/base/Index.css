@@ -73,7 +73,7 @@ h1, h2, h3, h4, h5 {
 
 button {
   background-color: var(--blue);
-  color: gray;
+  color: var(--gray-light);
   padding: 10px 18px;
   border: none;
   border-radius: 6px;
