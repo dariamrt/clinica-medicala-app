@@ -6,9 +6,19 @@ export const getAppointmentCancellationRate = async () => {
   return await res.json();
 };
 
-export const getPeakAppointmentHours = async () => {
-  const res = await fetch(`${API_URL}/peak-hours`, { credentials: "include" });
-  if (!res.ok) throw new Error("Eroare la obtinerea orelor de vârf.");
+export const getPeakAppointmentHours = async (includeByDay = true) => {
+  const url = includeByDay 
+    ? `${API_URL}/peak-hours?includeByDay=true` 
+    : `${API_URL}/peak-hours`;
+    
+  const res = await fetch(url, { credentials: "include" });
+  if (!res.ok) throw new Error("Eroare la obtinerea orelor de varf.");
+  return await res.json();
+};
+
+export const getPeakAppointmentHoursByDay = async (day) => {
+  const res = await fetch(`${API_URL}/peak-hours/${day}`, { credentials: "include" });
+  if (!res.ok) throw new Error(`Eroare la obtinerea orelor de varf pentru ${day}.`);
   return await res.json();
 };
 

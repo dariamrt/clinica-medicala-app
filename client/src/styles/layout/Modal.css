@@ -4,26 +4,27 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
 }
 
 .modal-card {
-  background: var(--white);
+  background: #ffffff;
   padding: 2rem;
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   animation: fadeIn 0.3s ease;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border-top: 5px solid var(--blue);
+  border: 2px solid var(--blue);
+  position: relative;
 }
 
 .modal-card h3 {
@@ -162,12 +163,53 @@ textarea {
 @keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-20px) scale(0.95);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
+}
+
+.modal-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.modal-message.success {
+  background-color: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  border-left: 4px solid #10b981;
+  color: #065f46;
+}
+
+.modal-message.error {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  border-left: 4px solid #ef4444;
+  color: #991b1b;
+}
+
+.modal-message.warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  border-left: 4px solid #f59e0b;
+  color: #92400e;
+}
+
+.modal-message.info {
+  background-color: rgba(59, 130, 246, 0.15);
+  border: 1px solid #3b82f6;
+  border-left: 4px solid #3b82f6;
+  color: #1e40af;
+}
+
+.modal-message p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 @media (max-width: 768px) {

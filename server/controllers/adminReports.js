@@ -111,28 +111,132 @@ const getAppointmentCancellationRate = async (req, res) => {
 // Peak Hours for Appointments
 const getPeakAppointmentHours = async (req, res) => {
     try {
+        const { includeByDay } = req.query;
+
         const peakHoursData = await Appointment.findAll({
-            attributes: ['start_time', [Sequelize.fn('COUNT', Sequelize.col('start_time')), 'numAppointments']],
-            group: ['start_time'],
+            attributes: [
+                [Sequelize.fn('HOUR', Sequelize.col('start_time')), 'hour'],
+                [Sequelize.fn('COUNT', Sequelize.col('start_time')), 'count']
+            ],
+            group: [Sequelize.fn('HOUR', Sequelize.col('start_time'))],
             order: [[Sequelize.fn('COUNT', Sequelize.col('start_time')), 'DESC']],
             raw: true
         });
 
         console.log("Debug - Peak Hours Data:", peakHoursData);
 
-        if (peakHoursData.length === 0) {
-            return res.status(200).json({ message: "No peak hours found.", peakHours: [] });
-        }
-
         const peakHours = peakHoursData.map(entry => ({
-            hour: entry.start_time,
-            count: entry.numAppointments
+            hour: String(entry.hour).padStart(2, '0'),
+            count: parseInt(entry.count)
         }));
 
-        return res.status(200).json({ peakHours });
+        let response = { peakHours };
+
+        if (includeByDay === 'true') {
+            const peakHoursByDayData = await Appointment.findAll({
+                attributes: [
+                    [Sequelize.fn('DAYNAME', Sequelize.col('date')), 'day_name'],
+                    [Sequelize.fn('WEEKDAY', Sequelize.col('date')), 'day_number'],
+                    [Sequelize.fn('HOUR', Sequelize.col('start_time')), 'hour'],
+                    [Sequelize.fn('COUNT', Sequelize.col('start_time')), 'count']
+                ],
+                group: [
+                    Sequelize.fn('WEEKDAY', Sequelize.col('date')),
+                    Sequelize.fn('HOUR', Sequelize.col('start_time'))
+                ],
+                order: [
+                    [Sequelize.fn('WEEKDAY', Sequelize.col('date')), 'ASC'],
+                    [Sequelize.fn('COUNT', Sequelize.col('start_time')), 'DESC']
+                ],
+                raw: true
+            });
+
+            const dayMapping = {
+                0: 'monday',  
+                1: 'tuesday',
+                2: 'wednesday',
+                3: 'thursday',
+                4: 'friday',
+                5: 'saturday',
+                6: 'sunday'
+            };
+
+            const peakHoursByDay = {};
+            
+            Object.values(dayMapping).forEach(day => {
+                peakHoursByDay[day] = [];
+            });
+
+            peakHoursByDayData.forEach(entry => {
+                const dayKey = dayMapping[entry.day_number];
+                if (dayKey) {
+                    peakHoursByDay[dayKey].push({
+                        hour: String(entry.hour).padStart(2, '0'),
+                        count: parseInt(entry.count)
+                    });
+                }
+            });
+
+            Object.keys(peakHoursByDay).forEach(day => {
+                peakHoursByDay[day].sort((a, b) => b.count - a.count);
+            });
+
+            response.peakHoursByDay = peakHoursByDay;
+        }
+
+        return res.status(200).json(response);
     } catch (error) {
         console.error("Error fetching peak appointment hours:", error);
         res.status(500).json({ message: "Error fetching peak appointment hours!" });
+    }
+};
+
+const getPeakAppointmentHoursByDay = async (req, res) => {
+    try {
+        const { day } = req.params; 
+        
+        const dayMapping = {
+            'monday': 0,
+            'tuesday': 1,
+            'wednesday': 2,
+            'thursday': 3,
+            'friday': 4,
+            'saturday': 5,
+            'sunday': 6
+        };
+
+        const dayNumber = dayMapping[day.toLowerCase()];
+        if (dayNumber === undefined) {
+            return res.status(400).json({ message: "Invalid day. Use: monday, tuesday, wednesday, thursday, friday, saturday, sunday" });
+        }
+
+        const peakHoursData = await Appointment.findAll({
+            attributes: [
+                [Sequelize.fn('HOUR', Sequelize.col('start_time')), 'hour'],
+                [Sequelize.fn('COUNT', Sequelize.col('start_time')), 'count']
+            ],
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.fn('WEEKDAY', Sequelize.col('date')), dayNumber)
+                ]
+            },
+            group: [Sequelize.fn('HOUR', Sequelize.col('start_time'))],
+            order: [[Sequelize.fn('COUNT', Sequelize.col('start_time')), 'DESC']],
+            raw: true
+        });
+
+        const peakHours = peakHoursData.map(entry => ({
+            hour: String(entry.hour).padStart(2, '0'),
+            count: parseInt(entry.count)
+        }));
+
+        return res.status(200).json({ 
+            day: day.toLowerCase(),
+            peakHours 
+        });
+    } catch (error) {
+        console.error(`Error fetching peak appointment hours for ${day}:`, error);
+        res.status(500).json({ message: `Error fetching peak appointment hours for ${day}!` });
     }
 };
 
@@ -295,6 +399,7 @@ module.exports = {
     deleteReport,
     getAppointmentCancellationRate,
     getPeakAppointmentHours,
+    getPeakAppointmentHoursByDay,
     getCommonDiagnoses,
     getDoctorPerformanceReport,
     predictAppointmentNoShow,

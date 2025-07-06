@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { ReportService, PatientService } from "@services";
+import { NoShowModal } from "@components";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 const PredictNoShowReport = () => {
   const [formData, setFormData] = useState({
-    mode: "manual", // "manual" sau "automat"
+    mode: "manual",
     age: "",
     gender: "female",
     date: "",
@@ -22,6 +23,31 @@ const PredictNoShowReport = () => {
   const [loadingPatients, setLoadingPatients] = useState(false);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [saved, setSaved] = useState(false);
+  
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info"
+  });
+
+  const showModal = (title, message, type = "info") => {
+    setModal({
+      isOpen: true,
+      title,
+      message,
+      type
+    });
+  };
+
+  const closeModal = () => {
+    setModal({
+      isOpen: false,
+      title: "",
+      message: "",
+      type: "info"
+    });
+  };
 
   useEffect(() => {
     loadPatients();
@@ -40,7 +66,7 @@ const PredictNoShowReport = () => {
           setPatients(patientsData);
       } catch (error) {
           console.error("Eroare la încărcarea pacienților:", error);
-          alert("Eroare la încărcarea pacienților.");
+          showModal("Eroare", "Eroare la încărcarea pacienților.", "error");
       } finally {
           setLoadingPatients(false);
       }
@@ -99,7 +125,7 @@ const PredictNoShowReport = () => {
       
       if (formData.mode === "manual") {
         if (!formData.age || !formData.gender || !formData.date || !formData.start_time) {
-          alert("Vă rugăm să completați toate câmpurile pentru predicția manuală.");
+          showModal("Câmpuri incomplete", "Vă rugăm să completați toate câmpurile pentru predicția manuală.", "warning");
           return;
         }
         
@@ -111,13 +137,13 @@ const PredictNoShowReport = () => {
         });
       } else {
         if (!formData.patient_id || !formData.appointment_id) {
-          alert("Vă rugăm să selectați un pacient și o programare.");
+          showModal("Selecție incompletă", "Vă rugăm să selectați un pacient și o programare.", "warning");
           return;
         }
         
         const selectedAppointment = appointments.find(app => app.id === formData.appointment_id);
         if (!selectedAppointment) {
-          alert("Programarea selectată nu este validă.");
+          showModal("Programare invalidă", "Programarea selectată nu este validă.", "error");
           return;
         }
         
@@ -143,7 +169,7 @@ const PredictNoShowReport = () => {
       });
     } catch (err) {
       console.error("Eroare la prezicerea programării:", err);
-      alert("Eroare la prezicerea programării.");
+      showModal("Eroare", "Eroare la prezicerea programării.", "error");
     } finally {
       setLoading(false);
     }
@@ -162,9 +188,10 @@ const PredictNoShowReport = () => {
         }
       });
       setSaved(true);
+      showModal("Succes", "Raport salvat cu succes!", "success");
       setTimeout(() => setSaved(false), 2000);
     } catch {
-      alert("Eroare la salvarea raportului.");
+      showModal("Eroare", "Eroare la salvarea raportului.", "error");
     }
   };
 
@@ -204,163 +231,171 @@ const PredictNoShowReport = () => {
   };
   
   return (
-    <div className="report-box">
-      <h3>Prezicere neprezentare programare</h3>
-      
-      <div className="form-group">
-        <label>Mod predicție</label>
-        <select name="mode" value={formData.mode} onChange={handleChange}>
-          <option value="manual">Introducere manuală</option>
-          <option value="patient">Selectare pacient</option>
-        </select>
-      </div>
+    <>
+      <div className="report-box">
+        <h3>Prezicere neprezentare programare</h3>
+        
+        <div className="form-group">
+          <label>Mod predicție</label>
+          <select name="mode" value={formData.mode} onChange={handleChange}>
+            <option value="manual">Introducere manuală</option>
+            <option value="patient">Selectare pacient</option>
+          </select>
+        </div>
 
-      {formData.mode === "manual" ? (
-        <>
-          <div className="form-group">
-            <label>Vârstă</label>
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              placeholder="Ex: 35"
-              min="1"
-              max="120"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Gen</label>
-            <select name="gender" value={formData.gender} onChange={handleChange}>
-              <option value="female">Femeie</option>
-              <option value="male">Bărbat</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Dată programare</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              min={new Date().toISOString().split('T')[0]} 
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Ora programării</label>
-            <select name="start_time" value={formData.start_time} onChange={handleChange} required>
-              {generateTimeOptions().map(time => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="form-group">
-            <label>Selectați pacientul</label>
-            {loadingPatients ? (
-              <p>Se încarcă pacienții...</p>
-            ) : (
-              <select 
-                name="patient_id" 
-                value={formData.patient_id} 
+        {formData.mode === "manual" ? (
+          <>
+            <div className="form-group">
+              <label>Vârstă</label>
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
                 onChange={handleChange}
+                placeholder="Ex: 35"
+                min="1"
+                max="120"
                 required
-              >
-                <option value="">-- Selectați un pacient --</option>
-                {patients.map(patient => (
-                  <option key={patient.user_id} value={patient.user_id}>
-                    {patient.first_name} {patient.last_name} - {patient.CNP}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Gen</label>
+              <select name="gender" value={formData.gender} onChange={handleChange}>
+                <option value="female">Femeie</option>
+                <option value="male">Bărbat</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Dată programare</label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                min={new Date().toISOString().split('T')[0]} 
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Ora programării</label>
+              <select name="start_time" value={formData.start_time} onChange={handleChange} required>
+                {generateTimeOptions().map(time => (
+                  <option key={time} value={time}>
+                    {time}
                   </option>
                 ))}
               </select>
-            )}
-          </div>
-
-          {selectedPatient && (
-            <div className="patient-info">
-              <h4>Informații pacient</h4>
-              <p><strong>Nume:</strong> {selectedPatient.first_name} {selectedPatient.last_name}</p>
-              <p><strong>Gen:</strong> {selectedPatient.gender === 'male' ? 'Bărbat' : 'Femeie'}</p>
-              <p><strong>Telefon:</strong> {selectedPatient.phone_number}</p>
-              <p><strong>Email:</strong> {selectedPatient.email}</p>
             </div>
-          )}
-
-          {formData.patient_id && (
+          </>
+        ) : (
+          <>
             <div className="form-group">
-              <label>Selectați programarea</label>
-              {loadingAppointments ? (
-                <p>Se încarcă programările...</p>
-              ) : appointments.length > 0 ? (
+              <label>Selectați pacientul</label>
+              {loadingPatients ? (
+                <p>Se încarcă pacienții...</p>
+              ) : (
                 <select 
-                  name="appointment_id" 
-                  value={formData.appointment_id} 
+                  name="patient_id" 
+                  value={formData.patient_id} 
                   onChange={handleChange}
                   required
                 >
-                  <option value="">-- Selectați o programare --</option>
-                  {appointments.map(appointment => (
-                    <option key={appointment.id} value={appointment.id}>
-                      {formatAppointmentDisplay(appointment)}
+                  <option value="">-- Selectați un pacient --</option>
+                  {patients.map(patient => (
+                    <option key={patient.user_id} value={patient.user_id}>
+                      {patient.first_name} {patient.last_name} - {patient.CNP}
                     </option>
                   ))}
                 </select>
-              ) : (
-                <p>Nu există programări viitoare pentru acest pacient.</p>
               )}
             </div>
-          )}
-        </>
-      )}
 
-      <button onClick={handlePredict} disabled={loading}>
-        {loading ? "Se prelucrează..." : "Prezice"}
-      </button>
+            {selectedPatient && (
+              <div className="patient-info">
+                <h4>Informații pacient</h4>
+                <p><strong>Nume:</strong> {selectedPatient.first_name} {selectedPatient.last_name}</p>
+                <p><strong>Gen:</strong> {selectedPatient.gender === 'male' ? 'Bărbat' : 'Femeie'}</p>
+                <p><strong>Telefon:</strong> {selectedPatient.phone_number}</p>
+                <p><strong>Email:</strong> {selectedPatient.email}</p>
+              </div>
+            )}
 
-      {prediction && (
-        <div className="prediction-results">
-          <p className="result-msg">
-            Probabilitatea neprezentării: <strong>{prediction.probability}</strong>
-          </p>
-          
-          {prediction.mode === "manual" && prediction.manualInfo && (
-            <div className="prediction-details">
-              <h4>Detalii predicție</h4>
-              <p><strong>Vârstă:</strong> {prediction.manualInfo.age} ani</p>
-              <p><strong>Gen:</strong> {prediction.manualInfo.gender === 'male' ? 'Bărbat' : 'Femeie'}</p>
-              <p><strong>Dată:</strong> {new Date(prediction.manualInfo.date).toLocaleDateString('ro-RO')}</p>
-              <p><strong>Ora:</strong> {prediction.manualInfo.start_time}</p>
+            {formData.patient_id && (
+              <div className="form-group">
+                <label>Selectați programarea</label>
+                {loadingAppointments ? (
+                  <p>Se încarcă programările...</p>
+                ) : appointments.length > 0 ? (
+                  <select 
+                    name="appointment_id" 
+                    value={formData.appointment_id} 
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">-- Selectați o programare --</option>
+                    {appointments.map(appointment => (
+                      <option key={appointment.id} value={appointment.id}>
+                        {formatAppointmentDisplay(appointment)}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <p>Nu există programări viitoare pentru acest pacient.</p>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        <button onClick={handlePredict} disabled={loading}>
+          {loading ? "Se prelucrează..." : "Prezice"}
+        </button>
+
+        {prediction && (
+          <div className="prediction-results">
+            <p className="result-msg">
+              Probabilitatea neprezentării: <strong>{prediction.probability}</strong>
+            </p>
+            
+            {prediction.mode === "manual" && prediction.manualInfo && (
+              <div className="prediction-details">
+                <h4>Detalii predicție</h4>
+                <p><strong>Vârstă:</strong> {prediction.manualInfo.age} ani</p>
+                <p><strong>Gen:</strong> {prediction.manualInfo.gender === 'male' ? 'Bărbat' : 'Femeie'}</p>
+                <p><strong>Dată:</strong> {new Date(prediction.manualInfo.date).toLocaleDateString('ro-RO')}</p>
+                <p><strong>Ora:</strong> {prediction.manualInfo.start_time}</p>
+              </div>
+            )}
+            
+            {prediction.mode === "patient" && prediction.patientInfo && (
+              <div className="prediction-details">
+                <h4>Detalii predicție</h4>
+                <p><strong>Pacient:</strong> {prediction.patientInfo.first_name} {prediction.patientInfo.last_name}</p>
+                {prediction.appointmentInfo && (
+                  <p><strong>Programare:</strong> {formatAppointmentDisplay(prediction.appointmentInfo)}</p>
+                )}
+              </div>
+            )}
+            
+            <div className="action-buttons">
+              <button onClick={handleSave}>Salvează raportul</button>
+              <button onClick={handleDownloadPDF}>Descarcă PDF</button>
             </div>
-          )}
-          
-          {prediction.mode === "patient" && prediction.patientInfo && (
-            <div className="prediction-details">
-              <h4>Detalii predicție</h4>
-              <p><strong>Pacient:</strong> {prediction.patientInfo.first_name} {prediction.patientInfo.last_name}</p>
-              {prediction.appointmentInfo && (
-                <p><strong>Programare:</strong> {formatAppointmentDisplay(prediction.appointmentInfo)}</p>
-              )}
-            </div>
-          )}
-          
-          <div className="action-buttons">
-            <button onClick={handleSave}>Salvează raportul</button>
-            <button onClick={handleDownloadPDF}>Descarcă PDF</button>
           </div>
-          
-          {saved && <p className="success-msg">Raport salvat cu succes!</p>}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+
+      <NoShowModal 
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        title={modal.title}
+        message={modal.message}
+        type={modal.type}
+      />
+    </>
   );
 };
 

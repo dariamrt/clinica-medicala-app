@@ -5,6 +5,7 @@ const { checkAuth, checkPermission } = require("../middlewares/checkPermission")
 
 router.get("/cancellation-rate", checkAuth, checkPermission(["admin"]), adminReportController.getAppointmentCancellationRate);
 router.get("/peak-hours", checkAuth, checkPermission(["admin"]), adminReportController.getPeakAppointmentHours);
+router.get('/peak-hours/:day', adminReportController.getPeakAppointmentHoursByDay); 
 router.get("/common-diagnoses", checkAuth, checkPermission(["admin"]), adminReportController.getCommonDiagnoses);
 router.get("/doctor-performance", checkAuth, checkPermission(["admin"]), adminReportController.getDoctorPerformanceReport);
 router.post("/save", checkAuth, checkPermission(["admin"]), adminReportController.saveReport);
