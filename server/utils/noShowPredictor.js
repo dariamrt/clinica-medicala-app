@@ -71,12 +71,21 @@ async function prepareTrainingData() {
 }
 
 async function calculateAgeFromPatientId(userId) {
-    const patient = await Patient.findOne({ where: { user_id: userId }, attributes: ['CNP'] });
-    if (!patient || !patient.CNP) return 0;
+    try {
+        const patient = await Patient.findOne({ 
+            where: { user_id: userId }, 
+            attributes: ['CNP'] 
+        });
+        
+        if (!patient || !patient.CNP) return 0;
 
-    const centuryPrefix = patient.CNP[0] === '1' || patient.CNP[0] === '2' ? "19" : "20";
-    const birthYear = parseInt(centuryPrefix + patient.CNP.substring(1, 3));
-    return new Date().getFullYear() - birthYear;
+        const centuryPrefix = patient.CNP[0] === '1' || patient.CNP[0] === '2' ? "19" : "20";
+        const birthYear = parseInt(centuryPrefix + patient.CNP.substring(1, 3));
+        return new Date().getFullYear() - birthYear;
+    } catch (error) {
+        console.error('Error calculating age from patient ID:', error);
+        return 0;
+    }
 }
 
 async function trainModel() {
@@ -118,19 +127,27 @@ async function trainModel() {
     return model;
 }
 
-async function predictNoShow(age, gender, date, start_time, previousCancellations) {
+async function predictNoShow(age, gender, date, start_time = "08:00", previousCancellations = 0) {
     const model = await trainModel();
 
     console.log("PredictNoShow - Raw Inputs:", { age, gender, date, start_time, previousCancellations });
 
-    age = age !== undefined ? parseFloat(age) : 0;
-    gender = gender !== undefined ? gender : "male";
-    date = date !== undefined ? date : new Date().toISOString().split("T")[0];
-    start_time = start_time !== undefined ? start_time : "08:00";
-    previousCancellations = previousCancellations !== undefined ? parseInt(previousCancellations) : 0;
+    age = age !== undefined && age !== null ? parseFloat(age) : 0;
+    gender = gender !== undefined && gender !== null ? gender.toLowerCase() : "male";
+    date = date !== undefined && date !== null ? date : new Date().toISOString().split("T")[0];
+    start_time = start_time !== undefined && start_time !== null ? start_time : "08:00";
+    previousCancellations = previousCancellations !== undefined && previousCancellations !== null ? parseInt(previousCancellations) : 0;
 
     const appointmentDate = new Date(date);
-    const [hours, minutes] = start_time.split(":").map(Number);
+    let hours, minutes;
+    
+    try {
+        [hours, minutes] = start_time.split(":").map(Number);
+    } catch (error) {
+        console.warn("Invalid start_time format, using default 08:00");
+        hours = 8;
+        minutes = 0;
+    }
 
     console.log("Processed Inputs:", { age, gender, date, start_time, previousCancellations, hours, minutes });
 
@@ -142,7 +159,7 @@ async function predictNoShow(age, gender, date, start_time, previousCancellation
         previousCancellations
     ]];
 
-    if (inputArray[0].some(isNaN)) {
+    if (inputArray[0].some(val => isNaN(val) || val === null || val === undefined)) {
         console.error("Invalid input array:", inputArray);
         throw new Error("Invalid input values. Check age, gender, date, start_time, and previousCancellations.");
     }
@@ -156,4 +173,9 @@ async function predictNoShow(age, gender, date, start_time, previousCancellation
     return probability > 0.7 ? "High Risk of No-Show" : probability > 0.4 ? "Medium Risk of No-Show" : "Low Risk";
 }
 
-module.exports = { prepareTrainingData, trainModel, predictNoShow };
+module.exports = { 
+    prepareTrainingData,
+    trainModel,
+    predictNoShow,
+    calculateAgeFromPatientId
+};

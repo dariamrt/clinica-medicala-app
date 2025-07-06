@@ -12,5 +12,6 @@ router.get("/stored", checkAuth, checkPermission(["admin"]), adminReportControll
 router.get("/:id", checkAuth, checkPermission(["admin"]), adminReportController.getReportById);
 router.delete("/:id", checkAuth, checkPermission(["admin"]), adminReportController.deleteReport);
 router.post("/predict-no-show", checkAuth, checkPermission(["admin"]), adminReportController.predictAppointmentNoShow);
+router.post('/predict-no-show-by-patient', checkAuth, checkPermission(['admin']), adminReportController.predictAppointmentNoShowByPatientId);
 
 module.exports = router;

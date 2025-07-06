@@ -1,5 +1,5 @@
 const { predictNoShow } = require('../utils/noShowPredictor');
-const { User, Appointment, Availability, MedicalHistory, Doctor, Specialty, AdminReport } = require("../models");
+const { User, Appointment, Availability, MedicalHistory, Doctor, Specialty, AdminReport, Patient } = require("../models");
 const { Sequelize } = require("sequelize");
 
 // generate a report and save if needed 
@@ -136,7 +136,7 @@ const getPeakAppointmentHours = async (req, res) => {
     }
 };
 
-// Most Common Diagnoses Report
+// Most Common Diagnoses 
 const getCommonDiagnoses = async (req, res) => {
     try {
         const diagnosesData = await MedicalHistory.findAll({
@@ -223,19 +223,67 @@ const getDoctorPerformanceReport = async (req, res) => {
     }
 };
 
-// Controller for the AI algorithm
+// No show
+const calculateAgeFromPatientId = async (userId) => {
+    try {
+        const patient = await Patient.findOne({ 
+            where: { user_id: userId }, 
+            attributes: ['CNP'] 
+        });
+        
+        if (!patient || !patient.CNP) return 0;
+
+        const centuryPrefix = patient.CNP[0] === '1' || patient.CNP[0] === '2' ? "19" : "20";
+        const birthYear = parseInt(centuryPrefix + patient.CNP.substring(1, 3));
+        return new Date().getFullYear() - birthYear;
+    } catch (error) {
+        console.error('Error calculating age:', error);
+        return 0;
+    }
+};
+
 const predictAppointmentNoShow = async (req, res) => {
     try {
-        const { age, gender, date } = req.body;
+        const { age, gender, date, start_time } = req.body;
         if (!age || !gender || !date) {
             return res.status(400).json({ message: "Age, gender, and date are required!" });
         }
 
-        const risk = await predictNoShow(age, gender, date);
+        const appointmentTime = start_time || "08:00";
+
+        const risk = await predictNoShow(age, gender, date, appointmentTime);
 
         return res.status(200).json({ risk });
     } catch (error) {
         console.error('Error predicting no-show:', error);
+        return res.status(500).json({ message: 'Error processing request' });
+    }
+};
+
+const predictAppointmentNoShowByPatientId = async (req, res) => {
+    try {
+        const { patient_id, date, start_time } = req.body;
+        if (!patient_id || !date || !start_time) {
+            return res.status(400).json({ message: "patient_id, date, start_time are required" });
+        }
+
+        const patient = await Patient.findOne({ where: { user_id: patient_id } });
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+
+        const age = await calculateAgeFromPatientId(patient_id);
+        const gender = patient.gender;
+
+        const previousCancellations = await Appointment.count({
+            where: { patient_id: patient_id, status: "cancelled" }
+        });
+
+        const risk = await predictNoShow(age, gender, date, start_time, previousCancellations);
+
+        return res.status(200).json({ risk });
+    } catch (error) {
+        console.error('Error predicting no-show by patient_id:', error);
         return res.status(500).json({ message: 'Error processing request' });
     }
 };
@@ -249,7 +297,9 @@ module.exports = {
     getPeakAppointmentHours,
     getCommonDiagnoses,
     getDoctorPerformanceReport,
-    predictAppointmentNoShow
+    predictAppointmentNoShow,
+    predictAppointmentNoShowByPatientId,
+    calculateAgeFromPatientId
 };
 
 

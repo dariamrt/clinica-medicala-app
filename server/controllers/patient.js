@@ -19,9 +19,8 @@ const getAllPatients = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: "Error fetching patients!" });
     }
-  };
+};
   
-
 const getPatientById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -179,9 +178,11 @@ const getPatientAppointments = async (req, res) => {
             include: [
                 {
                     model: Doctor,
-                    attributes: ["user_id", "first_name", "last_name"], 
+                    attributes: ["user_id", "first_name", "last_name"],
+                    as: "Doctors_Datum"
                 }
             ],
+            order: [["date", "DESC"]]
         });
 
         res.status(200).json(appointments);
@@ -210,7 +211,6 @@ const getAppointmentsForCurrentPatient = async (req, res) => {
       res.status(500).json({ message: "Error fetching patient's appointments!" });
     }
 };
-  
  
 const getMyMedicalHistory = async (req, res) => {
   try {
@@ -250,7 +250,6 @@ const getMyMedicalHistory = async (req, res) => {
     res.status(500).json({ message: "Error fetching your medical history.", error: error.message });
   }
 };
-
 
 const getMyPrescriptions = async (req, res) => {
   try {

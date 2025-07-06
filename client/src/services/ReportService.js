@@ -24,12 +24,12 @@ export const getDoctorPerformanceReport = async () => {
   return await res.json();
 };
 
-export const predictAppointmentNoShow = async ({ age, gender, date }) => {
+export const predictAppointmentNoShow = async ({ age, gender, date, start_time }) => {
   const res = await fetch(`${API_URL}/predict-no-show`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ age, gender, date }),
+    body: JSON.stringify({ age, gender, date, start_time }),
   });
 
   if (!res.ok) throw new Error("Eroare la predictia no-show appts.");
@@ -69,3 +69,20 @@ export const deleteReport = async (id) => {
   if (!res.ok) throw new Error("Eroare la sters raportul.");
   return await res.json();
 };
+
+export const predictAppointmentNoShowByPatient = async (data) => {
+        const response = await fetch(`${API_URL}/predict-no-show-by-patient`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to predict no-show by patient');
+        }
+        
+        return response.json();
+}
