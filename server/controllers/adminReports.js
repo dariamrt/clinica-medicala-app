@@ -90,18 +90,176 @@ const deleteReport = async (req, res) => {
 // Appointment Cancellation Rate Report
 const getAppointmentCancellationRate = async (req, res) => {
     try {
-        const totalAppointments = await Appointment.count();
-        const canceledAppointments = await Appointment.count({ where: { status: "cancelled" } });
+        const { period = '3months', doctor_id, specialty_id } = req.query;
+        
+        const endDate = new Date();
+        const startDate = new Date();
+        
+        switch (period) {
+            case '1month':
+                startDate.setMonth(startDate.getMonth() - 1);
+                break;
+            case '3months':
+                startDate.setMonth(startDate.getMonth() - 3);
+                break;
+            case '6months':
+                startDate.setMonth(startDate.getMonth() - 6);
+                break;
+            default:
+                startDate.setMonth(startDate.getMonth() - 3);
+        }
 
-        const cancellationRate = totalAppointments === 0 
-            ? "0.00%" 
-            : ((canceledAppointments / totalAppointments) * 100).toFixed(2) + "%";
+        let whereConditions = {
+            date: {
+                [Sequelize.Op.between]: [startDate, endDate]
+            }
+        };
+
+        let includeConditions = [];
+
+        if (doctor_id) {
+            whereConditions.doctor_id = doctor_id;
+        }
+
+        if (specialty_id) {
+            includeConditions.push({
+                model: Doctor,
+                where: { specialty_id: specialty_id },
+                attributes: []
+            });
+        }
+
+        const totalAppointments = await Appointment.count({ 
+            where: whereConditions,
+            include: includeConditions
+        });
+
+        const canceledAppointments = await Appointment.count({ 
+            where: { ...whereConditions, status: "cancelled" },
+            include: includeConditions
+        });
+
+        const noShowAppointments = await Appointment.count({ 
+            where: { ...whereConditions, status: "no_show" },
+            include: includeConditions
+        });
+
+        const completedAppointments = await Appointment.count({ 
+            where: { ...whereConditions, status: "completed" },
+            include: includeConditions
+        });
+
+        const cancellationRate = totalAppointments === 0 ? 0 : (canceledAppointments / totalAppointments) * 100;
+        const noShowRate = totalAppointments === 0 ? 0 : (noShowAppointments / totalAppointments) * 100;
+        const completionRate = totalAppointments === 0 ? 0 : (completedAppointments / totalAppointments) * 100;
+
+        const monthlyTrend = await Appointment.findAll({
+            attributes: [
+                [Sequelize.fn('DATE_FORMAT', Sequelize.col('Appointment.date'), '%Y-%m'), 'month'],
+                [Sequelize.fn('COUNT', Sequelize.col('Appointment.id')), 'total'],
+                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'cancelled' THEN 1 ELSE 0 END")), 'cancelled'],
+                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'no_show' THEN 1 ELSE 0 END")), 'no_show']
+            ],
+            where: whereConditions,
+            include: includeConditions,
+            group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('Appointment.date'), '%Y-%m')],
+            order: [[Sequelize.fn('DATE_FORMAT', Sequelize.col('Appointment.date'), '%Y-%m'), 'ASC']],
+            raw: true
+        });
+
+        const trendData = monthlyTrend.map(entry => ({
+            month: entry.month,
+            total: parseInt(entry.total),
+            cancelled: parseInt(entry.cancelled),
+            no_show: parseInt(entry.no_show),
+            cancellation_rate: entry.total > 0 ? ((entry.cancelled / entry.total) * 100).toFixed(2) : "0.00",
+            no_show_rate: entry.total > 0 ? ((entry.no_show / entry.total) * 100).toFixed(2) : "0.00"
+        }));
+
+        const byDoctorData = await Appointment.findAll({
+            attributes: [
+                'doctor_id',
+                [Sequelize.fn('COUNT', Sequelize.col('Appointment.id')), 'total'],
+                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'cancelled' THEN 1 ELSE 0 END")), 'cancelled']
+            ],
+            include: [{
+                model: Doctor,
+                attributes: ['first_name', 'last_name'],
+                include: [{
+                    model: Specialty,
+                    attributes: ['name']
+                }]
+            }],
+            where: whereConditions,
+            group: ['Appointment.doctor_id'],
+            order: [[Sequelize.literal('cancelled/total'), 'DESC']],
+            raw: false
+        });
+
+        const doctorBreakdown = byDoctorData.map(entry => ({
+            doctor_id: entry.doctor_id,
+            doctor_name: `${entry.Doctor.first_name} ${entry.Doctor.last_name}`,
+            specialty: entry.Doctor.Specialty?.name || 'N/A',
+            total_appointments: parseInt(entry.get('total')),
+            cancelled_appointments: parseInt(entry.get('cancelled')),
+            cancellation_rate: parseFloat(((entry.get('cancelled') / entry.get('total')) * 100).toFixed(2))
+        }));
+
+        const bySpecialtyData = await Appointment.findAll({
+            attributes: [
+                [Sequelize.fn('COUNT', Sequelize.col('Appointment.id')), 'total'],
+                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'cancelled' THEN 1 ELSE 0 END")), 'cancelled']
+            ],
+            include: [{
+                model: Doctor,
+                attributes: [],
+                include: [{
+                    model: Specialty,
+                    attributes: ['id', 'name']
+                }]
+            }],
+            where: whereConditions,
+            group: ['Doctor.Specialty.id'],
+            order: [[Sequelize.literal('cancelled/total'), 'DESC']],
+            raw: false
+        });
+
+        const specialtyBreakdown = bySpecialtyData.map(entry => ({
+            specialty_id: entry.Doctor.Specialty.id,
+            specialty_name: entry.Doctor.Specialty.name,
+            total_appointments: parseInt(entry.get('total')),
+            cancelled_appointments: parseInt(entry.get('cancelled')),
+            cancellation_rate: parseFloat(((entry.get('cancelled') / entry.get('total')) * 100).toFixed(2))
+        }));
 
         return res.status(200).json({
-            totalAppointments,
-            canceledAppointments,
-            cancellationRate
+            period,
+            dateRange: {
+                start: startDate.toISOString().split('T')[0],
+                end: endDate.toISOString().split('T')[0]
+            },
+            filters: {
+                doctor_id: doctor_id || null,
+                specialty_id: specialty_id || null
+            },
+            overview: {
+                totalAppointments,
+                canceledAppointments,
+                noShowAppointments,
+                completedAppointments,
+                cancellationRate: Math.round(cancellationRate * 100) / 100,
+                noShowRate: Math.round(noShowRate * 100) / 100,
+                completionRate: Math.round(completionRate * 100) / 100
+            },
+            trends: {
+                monthly: trendData
+            },
+            breakdowns: {
+                byDoctor: doctorBreakdown,
+                bySpecialty: specialtyBreakdown
+            }
         });
+
     } catch (error) {
         console.error("Error fetching cancellation rate:", error);
         res.status(500).json({ message: "Error fetching cancellation rate!" });
@@ -273,58 +431,160 @@ const getCommonDiagnoses = async (req, res) => {
 // Doctor Performance Report
 const getDoctorPerformanceReport = async (req, res) => {
     try {
+        const { period = '3months' } = req.query;
+        
+        const endDate = new Date();
+        const startDate = new Date();
+        switch (period) {
+            case '1month':
+                startDate.setMonth(startDate.getMonth() - 1);
+                break;
+            case '3months':
+                startDate.setMonth(startDate.getMonth() - 3);
+                break;
+            case '6months':
+                startDate.setMonth(startDate.getMonth() - 6);
+                break;
+            case '1year':
+                startDate.setFullYear(startDate.getFullYear() - 1);
+                break;
+            default:
+                startDate.setMonth(startDate.getMonth() - 3);
+        }
+
         const doctorPerformanceData = await Doctor.findAll({
             attributes: [
                 'user_id',
                 'first_name',
                 'last_name',
-                [Sequelize.fn('COUNT', Sequelize.col('Appointments.id')), 'total_appointments'],
-                [Sequelize.fn('IFNULL', Sequelize.literal(
-                    "CASE WHEN COUNT(Appointments.id) > 0 THEN AVG(TIMESTAMPDIFF(MINUTE, Availabilities.start_time, Availabilities.end_time)) ELSE 0 END"
-                ), 0), 'avg_duration'],
-                [Sequelize.fn('IFNULL', Sequelize.col('Appointments.status'), 'No Appointments'), 'appointment_status']
+                'specialty_id'
             ],
             include: [
                 {
                     model: Appointment,
-                    attributes: ['id', 'status'],
-                    required: false
-                },
-                {
-                    model: Availability,
-                    attributes: [],
-                    required: false
+                    where: {
+                        date: {
+                            [Sequelize.Op.between]: [startDate, endDate]
+                        }
+                    },
+                    required: false,
+                    attributes: ['id', 'status', 'date', 'patient_id']
                 },
                 {
                     model: Specialty,
                     attributes: ['id', 'name']
                 }
             ],
-            group: ['user_id', 'Specialty.id'],
-            order: [[Sequelize.literal('total_appointments'), 'DESC']],
-            raw: true
+            raw: false
         });
 
-        const formattedData = doctorPerformanceData.map(doctor => ({
-            user_id: doctor.user_id,
-            first_name: doctor.first_name,
-            last_name: doctor.last_name,
-            total_appointments: doctor.total_appointments,
-            avg_duration: doctor.avg_duration,
-            appointment_status: doctor.appointment_status || "No Appointments",
-            specialty: {
-                id: doctor["Specialty.id"],
-                name: doctor["Specialty.name"]
-            }
-        }));
+        const performanceReport = await Promise.all(
+            doctorPerformanceData.map(async (doctor) => {
+                const appointments = doctor.Appointments || [];
+                
+                const totalAppointments = appointments.length;
+                const completedAppointments = appointments.filter(apt => apt.status === 'completed').length;
+                const cancelledAppointments = appointments.filter(apt => apt.status === 'cancelled').length;
+                const noShowAppointments = appointments.filter(apt => apt.status === 'no_show').length;
 
-        console.log("Debug - Formatted Doctor Performance Data:", formattedData);
+                const completionRate = totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
+                const cancellationRate = totalAppointments > 0 ? (cancelledAppointments / totalAppointments) * 100 : 0;
+                const noShowRate = totalAppointments > 0 ? (noShowAppointments / totalAppointments) * 100 : 0;
 
-        return res.status(200).json({ doctorPerformanceReport: formattedData });
+                const availabilityData = await Availability.findAll({
+                    where: {
+                        doctor_id: doctor.user_id,
+                        date: {
+                            [Sequelize.Op.between]: [startDate, endDate]
+                        }
+                    }
+                });
+
+                const totalAvailableSlots = availabilityData.length;
+                const utilizationRate = totalAvailableSlots > 0 ? (totalAppointments / totalAvailableSlots) * 100 : 0;
+
+                const patientIds = appointments.map(apt => apt.patient_id);
+                const uniquePatients = [...new Set(patientIds)];
+                const repeatPatients = patientIds.length - uniquePatients.length;
+                const patientRetentionRate = uniquePatients.length > 0 ? (repeatPatients / uniquePatients.length) * 100 : 0;
+
+                const revenueGenerated = completedAppointments * 150;
+
+                const performanceScore = calculateOverallScore({
+                    completionRate,
+                    utilizationRate,
+                    patientRetentionRate,
+                    cancellationRate,
+                    noShowRate
+                });
+
+                const performanceTier = getPerformanceTier(performanceScore);
+
+                return {
+                    user_id: doctor.user_id,
+                    first_name: doctor.first_name,
+                    last_name: doctor.last_name,
+                    specialty: {
+                        id: doctor.Specialty?.id,
+                        name: doctor.Specialty?.name
+                    },
+                    total_appointments: totalAppointments,
+                    completed_appointments: completedAppointments,
+                    cancelled_appointments: cancelledAppointments,
+                    no_show_appointments: noShowAppointments,
+                    unique_patients: uniquePatients.length,
+                    completion_rate: Math.round(completionRate * 100) / 100,
+                    cancellation_rate: Math.round(cancellationRate * 100) / 100,
+                    no_show_rate: Math.round(noShowRate * 100) / 100,
+                    utilization_rate: Math.round(utilizationRate * 100) / 100,
+                    patient_retention_rate: Math.round(patientRetentionRate * 100) / 100,
+                    revenue_generated: revenueGenerated,
+                    performance_score: Math.round(performanceScore * 100) / 100,
+                    performance_tier: performanceTier,
+                    ranking: 0
+                };
+            })
+        );
+
+        performanceReport.sort((a, b) => b.performance_score - a.performance_score);
+        performanceReport.forEach((doctor, index) => {
+            doctor.ranking = index + 1;
+        });
+
+        return res.status(200).json({
+            doctorPerformanceReport: performanceReport,
+            period,
+            totalDoctors: performanceReport.length,
+            averageScore: performanceReport.length > 0 ? Math.round((performanceReport.reduce((sum, doctor) => sum + doctor.performance_score, 0) / performanceReport.length) * 100) / 100 : 0
+        });
+
     } catch (error) {
         console.error("Error fetching doctor performance report:", error);
         res.status(500).json({ message: "Error fetching doctor performance report!" });
     }
+};
+
+const calculateOverallScore = (metrics) => {
+    const {
+        completionRate,
+        utilizationRate,
+        patientRetentionRate,
+        cancellationRate,
+        noShowRate
+    } = metrics;
+
+    const positiveScore = (completionRate * 0.4) + (utilizationRate * 0.3) + (patientRetentionRate * 0.2);
+    const negativeScore = (cancellationRate * 0.05) + (noShowRate * 0.05);
+
+    return Math.max(0, Math.min(100, positiveScore - negativeScore));
+};
+
+const getPerformanceTier = (score) => {
+    if (score >= 85) return 'Excelent';
+    if (score >= 70) return 'Bun';
+    if (score >= 55) return 'Mediu';
+    if (score >= 40) return 'Sub medie';
+    return 'Necesita imbunatatire';
 };
 
 // No show
