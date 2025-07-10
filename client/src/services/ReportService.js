@@ -1,7 +1,10 @@
 const API_URL = "http://localhost:8080/api/admin-reports";
 
-export const getAppointmentCancellationRate = async () => {
-  const res = await fetch(`${API_URL}/cancellation-rate`, { credentials: "include" });
+export const getAppointmentCancellationRate = async (period = "3months") => {
+  const params = new URLSearchParams();
+  if (period) params.append("period", period);
+
+  const res = await fetch(`${API_URL}/cancellation-rate?${params.toString()}`, { credentials: "include" });
   if (!res.ok) throw new Error("Eroare la obtinerea ratei de anulare.");
   return await res.json();
 };

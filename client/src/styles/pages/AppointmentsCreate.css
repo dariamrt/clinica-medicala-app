@@ -59,6 +59,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1em;
+  color: var(--dark-blue);
 }
 
 .react-calendar__navigation button {
@@ -70,6 +71,7 @@ h2 {
   transition: background-color 0.2s ease-in-out;
   border: none;
   cursor: pointer;
+  color: var(--dark-blue);
 }
 
 .react-calendar__navigation button:hover {

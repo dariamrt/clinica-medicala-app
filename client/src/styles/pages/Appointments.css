@@ -17,6 +17,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px;
   background-color: white;
+  color: var(--dark-blue);
 }
 
 .react-calendar__tile {
@@ -25,6 +26,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  color: var(--dark-blue);
 }
 
 .has-appointment {

@@ -91,10 +91,16 @@ const deleteReport = async (req, res) => {
 const getAppointmentCancellationRate = async (req, res) => {
     try {
         const { period = '3months', doctor_id, specialty_id } = req.query;
-        
+
+        if (doctor_id && specialty_id) {
+            return res.status(400).json({
+                message: "Trebuie să selectezi fie un doctor, fie o specializare, nu ambele!"
+            });
+        }
+
         const endDate = new Date();
         const startDate = new Date();
-        
+
         switch (period) {
             case '1month':
                 startDate.setMonth(startDate.getMonth() - 1);
@@ -109,138 +115,28 @@ const getAppointmentCancellationRate = async (req, res) => {
                 startDate.setMonth(startDate.getMonth() - 3);
         }
 
-        let whereConditions = {
+        const where = {
             date: {
                 [Sequelize.Op.between]: [startDate, endDate]
             }
         };
 
-        let includeConditions = [];
+        if (doctor_id) where.doctor_id = doctor_id;
 
-        if (doctor_id) {
-            whereConditions.doctor_id = doctor_id;
-        }
-
-        if (specialty_id) {
-            includeConditions.push({
-                model: Doctor,
-                where: { specialty_id: specialty_id },
-                attributes: []
-            });
-        }
-
-        const totalAppointments = await Appointment.count({ 
-            where: whereConditions,
-            include: includeConditions
-        });
-
-        const canceledAppointments = await Appointment.count({ 
-            where: { ...whereConditions, status: "cancelled" },
-            include: includeConditions
-        });
-
-        const noShowAppointments = await Appointment.count({ 
-            where: { ...whereConditions, status: "no_show" },
-            include: includeConditions
-        });
-
-        const completedAppointments = await Appointment.count({ 
-            where: { ...whereConditions, status: "completed" },
-            include: includeConditions
-        });
+        const totalAppointments = await Appointment.count({ where });
+        const canceledAppointments = await Appointment.count({ where: { ...where, status: "cancelled" } });
+        const noShowAppointments = await Appointment.count({ where: { ...where, status: "no_show" } });
+        const completedAppointments = await Appointment.count({ where: { ...where, status: "completed" } });
 
         const cancellationRate = totalAppointments === 0 ? 0 : (canceledAppointments / totalAppointments) * 100;
         const noShowRate = totalAppointments === 0 ? 0 : (noShowAppointments / totalAppointments) * 100;
         const completionRate = totalAppointments === 0 ? 0 : (completedAppointments / totalAppointments) * 100;
 
-        const monthlyTrend = await Appointment.findAll({
-            attributes: [
-                [Sequelize.fn('DATE_FORMAT', Sequelize.col('Appointment.date'), '%Y-%m'), 'month'],
-                [Sequelize.fn('COUNT', Sequelize.col('Appointment.id')), 'total'],
-                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'cancelled' THEN 1 ELSE 0 END")), 'cancelled'],
-                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'no_show' THEN 1 ELSE 0 END")), 'no_show']
-            ],
-            where: whereConditions,
-            include: includeConditions,
-            group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('Appointment.date'), '%Y-%m')],
-            order: [[Sequelize.fn('DATE_FORMAT', Sequelize.col('Appointment.date'), '%Y-%m'), 'ASC']],
-            raw: true
-        });
-
-        const trendData = monthlyTrend.map(entry => ({
-            month: entry.month,
-            total: parseInt(entry.total),
-            cancelled: parseInt(entry.cancelled),
-            no_show: parseInt(entry.no_show),
-            cancellation_rate: entry.total > 0 ? ((entry.cancelled / entry.total) * 100).toFixed(2) : "0.00",
-            no_show_rate: entry.total > 0 ? ((entry.no_show / entry.total) * 100).toFixed(2) : "0.00"
-        }));
-
-        const byDoctorData = await Appointment.findAll({
-            attributes: [
-                'doctor_id',
-                [Sequelize.fn('COUNT', Sequelize.col('Appointment.id')), 'total'],
-                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'cancelled' THEN 1 ELSE 0 END")), 'cancelled']
-            ],
-            include: [{
-                model: Doctor,
-                attributes: ['first_name', 'last_name'],
-                include: [{
-                    model: Specialty,
-                    attributes: ['name']
-                }]
-            }],
-            where: whereConditions,
-            group: ['Appointment.doctor_id'],
-            order: [[Sequelize.literal('cancelled/total'), 'DESC']],
-            raw: false
-        });
-
-        const doctorBreakdown = byDoctorData.map(entry => ({
-            doctor_id: entry.doctor_id,
-            doctor_name: `${entry.Doctor.first_name} ${entry.Doctor.last_name}`,
-            specialty: entry.Doctor.Specialty?.name || 'N/A',
-            total_appointments: parseInt(entry.get('total')),
-            cancelled_appointments: parseInt(entry.get('cancelled')),
-            cancellation_rate: parseFloat(((entry.get('cancelled') / entry.get('total')) * 100).toFixed(2))
-        }));
-
-        const bySpecialtyData = await Appointment.findAll({
-            attributes: [
-                [Sequelize.fn('COUNT', Sequelize.col('Appointment.id')), 'total'],
-                [Sequelize.fn('SUM', Sequelize.literal("CASE WHEN Appointment.status = 'cancelled' THEN 1 ELSE 0 END")), 'cancelled']
-            ],
-            include: [{
-                model: Doctor,
-                attributes: [],
-                include: [{
-                    model: Specialty,
-                    attributes: ['id', 'name']
-                }]
-            }],
-            where: whereConditions,
-            group: ['Doctor.Specialty.id'],
-            order: [[Sequelize.literal('cancelled/total'), 'DESC']],
-            raw: false
-        });
-
-        const specialtyBreakdown = bySpecialtyData.map(entry => ({
-            specialty_id: entry.Doctor.Specialty.id,
-            specialty_name: entry.Doctor.Specialty.name,
-            total_appointments: parseInt(entry.get('total')),
-            cancelled_appointments: parseInt(entry.get('cancelled')),
-            cancellation_rate: parseFloat(((entry.get('cancelled') / entry.get('total')) * 100).toFixed(2))
-        }));
-
-        return res.status(200).json({
+        const response = {
             period,
             dateRange: {
                 start: startDate.toISOString().split('T')[0],
                 end: endDate.toISOString().split('T')[0]
-            },
-            filters: {
-                doctor_id: doctor_id || null,
-                specialty_id: specialty_id || null
             },
             overview: {
                 totalAppointments,
@@ -250,21 +146,16 @@ const getAppointmentCancellationRate = async (req, res) => {
                 cancellationRate: Math.round(cancellationRate * 100) / 100,
                 noShowRate: Math.round(noShowRate * 100) / 100,
                 completionRate: Math.round(completionRate * 100) / 100
-            },
-            trends: {
-                monthly: trendData
-            },
-            breakdowns: {
-                byDoctor: doctorBreakdown,
-                bySpecialty: specialtyBreakdown
             }
-        });
+        };
 
+        return res.status(200).json(response);
     } catch (error) {
         console.error("Error fetching cancellation rate:", error);
-        res.status(500).json({ message: "Error fetching cancellation rate!" });
+        return res.status(500).json({ message: "Error fetching cancellation rate!" });
     }
 };
+
 
 // Peak Hours for Appointments
 const getPeakAppointmentHours = async (req, res) => {
