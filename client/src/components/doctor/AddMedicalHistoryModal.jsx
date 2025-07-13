@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { MedicalHistoryService } from "@services";
+import { MedicalHistoryService, AuthService } from "@services";
 import "@styles/layout/Modal.css";
 
 const AddMedicalHistoryModal = ({ patientId, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     diagnosis: "",
-    description: "",
     notes: ""
   });
   const [errors, setErrors] = useState({});
@@ -17,7 +16,6 @@ const AddMedicalHistoryModal = ({ patientId, onClose, onSuccess }) => {
       ...prev,
       [name]: value
     }));
-    
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -31,28 +29,24 @@ const AddMedicalHistoryModal = ({ patientId, onClose, onSuccess }) => {
     if (!formData.diagnosis.trim()) {
       newErrors.diagnosis = "Diagnosticul este obligatoriu";
     }
-    if (!formData.description.trim()) {
-      newErrors.description = "Descrierea este obligatorie";
+    if (!formData.notes.trim()) {
+      newErrors.notes = "Descrierea este obligatorie";
     }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsSubmitting(true);
     try {
+      const user = await AuthService.getCurrentUser();
       await MedicalHistoryService.addMedicalHistory(patientId, {
         diagnosis: formData.diagnosis,
-        description: formData.description,
         notes: formData.notes,
-        date: new Date().toISOString().split("T")[0]
+        doctor_id: user.id // trimite doctorul logat
       });
-      
       if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
@@ -67,7 +61,6 @@ const AddMedicalHistoryModal = ({ patientId, onClose, onSuccess }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <h3>Adaugă fișă medicală</h3>
-        
         <form onSubmit={handleSubmit} className="medical-history-form">
           <div className="form-group">
             <label htmlFor="diagnosis">Diagnostic <span className="required">*</span></label>
@@ -82,49 +75,25 @@ const AddMedicalHistoryModal = ({ patientId, onClose, onSuccess }) => {
             />
             {errors.diagnosis && <p className="error-message">{errors.diagnosis}</p>}
           </div>
-
           <div className="form-group">
-            <label htmlFor="description">Descriere <span className="required">*</span></label>
-            <textarea
-              id="description"
-              name="description"
-              rows="4"
-              value={formData.description}
-              onChange={handleChange}
-              className={errors.description ? "input-error" : ""}
-              placeholder="Descrieți starea pacientului și detalii despre diagnostic"
-            />
-            {errors.description && <p className="error-message">{errors.description}</p>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="notes">Observații</label>
+            <label htmlFor="notes">Descriere <span className="required">*</span></label>
             <textarea
               id="notes"
               name="notes"
-              rows="3"
+              rows="4"
               value={formData.notes}
               onChange={handleChange}
-              placeholder="Observații adiționale (opțional)"
+              className={errors.notes ? "input-error" : ""}
+              placeholder="Descrieți starea pacientului și detalii despre diagnostic"
             />
+            {errors.notes && <p className="error-message">{errors.notes}</p>}
           </div>
-
           {errors.submit && <p className="error-message submit-error">{errors.submit}</p>}
-
           <div className="modal-actions">
-            <button 
-              type="submit" 
-              className="primary-btn" 
-              disabled={isSubmitting}
-            >
+            <button type="submit" className="primary-btn" disabled={isSubmitting}>
               {isSubmitting ? "Se salvează..." : "Salvează"}
             </button>
-            <button 
-              type="button" 
-              className="secondary-btn" 
-              onClick={onClose} 
-              disabled={isSubmitting}
-            >
+            <button type="button" className="secondary-btn" onClick={onClose} disabled={isSubmitting}>
               Anulează
             </button>
           </div>

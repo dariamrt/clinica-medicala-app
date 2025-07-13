@@ -7,6 +7,6 @@ router.get("/", checkAuth, checkPermission(["admin"]), appointmentController.get
 router.get("/:id", checkAuth, checkSelfOrAdmin, appointmentController.getAppointmentById);
 router.post("/book", checkAuth, checkPermission(["patient"]), appointmentController.bookAppointment);
 router.put("/:id", checkAuth, checkPermission(["doctor", "admin"]), appointmentController.updateAppointment);
-router.delete("/:id", checkAuth, checkSelfOrAdmin, appointmentController.deleteAppointment);
+router.delete("/:id", checkAuth, appointmentController.deleteAppointment);
 
 module.exports = router;

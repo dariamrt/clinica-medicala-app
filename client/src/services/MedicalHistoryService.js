@@ -1,7 +1,7 @@
-const API_URL = "http://localhost:8080/api/medical-history";
+const API_URL = "http://localhost:8080/api/patients";
 
 export const addMedicalHistory = async (patientId, data) => {
-  const res = await fetch(`${API_URL}`, {
+  const res = await fetch(`${API_URL}/medical-note`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },

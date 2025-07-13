@@ -133,34 +133,81 @@ const updateAppointment = async (req, res) => {
 const deleteAppointment = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log("Delete request from user:", req.user?.id, "for appointment:", id);
 
         const appointment = await Appointment.findByPk(id);
         if (!appointment) {
             return res.status(404).json({ message: "Appointment not found!" });
         }
 
-        const now = new Date();
-        const appointmentDate = new Date(appointment.date);
-        if (appointmentDate - now < 24 * 60 * 60 * 1000) {
-            return res.status(400).json({ message: "Appointments can only be canceled at least 24 hours in advance!" });
+        console.log("Appointment found:", {
+            id: appointment.id,
+            patient_id: appointment.patient_id,
+            doctor_id: appointment.doctor_id,
+            status: appointment.status,
+            date: appointment.date
+        });
+
+        // Verifică dacă utilizatorul are dreptul să anuleze programarea
+        const userRole = req.user?.role;
+        const userId = req.user?.id;
+
+        console.log("User role:", userRole, "User ID:", userId);
+
+        // Pacientul poate anula doar propriile programări
+        if (userRole === 'patient' && appointment.patient_id !== userId) {
+            return res.status(403).json({ message: "You can only cancel your own appointments!" });
         }
 
+        // Doctorul poate anula programările unde el este doctorul
+        if (userRole === 'doctor' && appointment.doctor_id !== userId) {
+            return res.status(403).json({ message: "You can only cancel appointments where you are the doctor!" });
+        }
+
+        // Verifică dacă programarea poate fi anulată (status)
+        if (appointment.status !== 'confirmed') {
+            return res.status(400).json({ message: "Only confirmed appointments can be canceled!" });
+        }
+
+        // Verifică regula de 24 ore
+        const appointmentDateTime = new Date(`${appointment.date}T${appointment.start_time}`);
+        const now = new Date();
+        const timeDifference = appointmentDateTime - now;
+        const hoursUntilAppointment = timeDifference / (1000 * 60 * 60);
+        
+        console.log("Time check:", {
+            now: now.toISOString(),
+            appointmentDateTime: appointmentDateTime.toISOString(),
+            hoursUntil: hoursUntilAppointment
+        });
+
+        if (hoursUntilAppointment < 24) {
+            return res.status(400).json({ 
+                message: "Appointments can only be canceled at least 24 hours in advance!"
+            });
+        }
+
+        // Anulează programarea
         await appointment.update({ status: "cancelled" });
 
+        // Eliberează disponibilitatea
         const availability = await Availability.findOne({ where: { appointment_id: id } });
         if (availability) {
             await availability.update({ appointment_id: null });
         }
 
+        // Creează notificare
+        const notificationUserId = userRole === 'patient' ? appointment.doctor_id : appointment.patient_id;
         await Notification.create({
-            user_id: appointment.doctor_id,
-            message: `The patient has canceled the appointment on ${appointment.date} at ${appointment.start_time}.`
+            user_id: notificationUserId,
+            message: `The appointment on ${appointment.date} at ${appointment.start_time} has been canceled.`
         });
 
         res.status(200).json({ message: "Appointment successfully canceled!" });
 
     } catch (error) {
-        res.status(500).json({ message: "Error canceling appointment!" });
+        console.error("Error in deleteAppointment:", error);
+        res.status(500).json({ message: "Error canceling appointment!", error: error.message });
     }
 };
 

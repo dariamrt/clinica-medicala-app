@@ -17,17 +17,37 @@ export const bookAppointment = async ({ availability_id, reimbursed_by_CAS }) =>
 };
 
 export const cancelAppointment = async (appointmentId) => {
-  const res = await fetch(`${API_URL}/${appointmentId}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
+    try {
+        console.log("Canceling appointment with ID:", appointmentId);
+        
+        const url = `${API_URL}/${appointmentId}`;
+        console.log("Request URL:", url);
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Eroare la anularea programării!");
-  }
+        const response = await fetch(url, {
+            method: 'DELETE',
+            credentials: 'include', // Folosește cookies în loc de Bearer token
+            headers: {
+                'Content-Type': 'application/json'
+                // Nu mai trimite Authorization header
+            }
+        });
 
-  return await res.json();
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.log("Error response data:", errorData);
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Success response:", data);
+        return data;
+
+    } catch (error) {
+        console.error("Error in cancelAppointment service:", error);
+        throw error;
+    }
 };
 
 export const getAllAppointments = async () => {
