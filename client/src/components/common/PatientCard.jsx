@@ -1,4 +1,3 @@
-import React from "react";
 import "@styles/components/PatientCard.css";
 
 const PatientCard = ({ patient, detailView = false, onClick }) => {

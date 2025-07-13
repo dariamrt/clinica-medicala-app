@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthService } from "@services";
-import { PatientAppointmentItem, DoctorAppointmentItem } from "@components";
-import { AdminAppointmentItem } from "../admin";
+import { PatientAppointmentItem, DoctorAppointmentItem, AdminAppointmentItem } from "@components";
+import "@styles/components/AppointmentItem.css";
 
 const AppointmentItem = (props) => {
   const [role, setRole] = useState(null);

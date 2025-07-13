@@ -1,4 +1,3 @@
-import React from "react";
 import "@styles/layout/Modal.css";
 
 const CancelAppointmentModal = ({ onConfirm, onClose }) => (

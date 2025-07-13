@@ -1,4 +1,3 @@
-import React from "react";
 import "@styles/components/MedicalHistoryCard.css";
 
 const PatientMedicalHistoryCard = ({ record, onAddPrescription, userRole }) => {
@@ -16,27 +15,49 @@ const PatientMedicalHistoryCard = ({ record, onAddPrescription, userRole }) => {
       : "Nespecificat";
 
   const medicamente = Array.isArray(prescription?.meds)
-    ? prescription.meds.join(", ")
-    : prescription?.meds || "Nespecificat";
+    ? prescription.meds
+    : prescription?.meds ? [prescription.meds] : [];
 
   const instructiuni = prescription?.instructions || "Nespecificat";
 
   return (
     <div className="medical-history-card">
-      <p><strong>Adăugată la:</strong> {new Date(record.createdAt).toLocaleDateString("ro-RO")}</p>
-      <p><strong>Diagnostic:</strong> {record.diagnosis}</p>
-      <p><strong>Observații:</strong> {record.notes}</p>
-
-      <div className="prescription-info-box">
-        <p><strong>Doctor:</strong> {doctorName}</p>
-
-        {record.Prescription && (
-          <>
-            <p><strong>Medicamente:</strong> {medicamente}</p>
-            <p><strong>Instrucțiuni:</strong> {instructiuni}</p>
-          </>
-        )}
+      <div className="medical-history-header">
+        <p className="medical-history-date">
+          {new Date(record.createdAt).toLocaleDateString("ro-RO")}
+        </p>
+        <p className="medical-history-doctor">Dr. {doctorName}</p>
       </div>
+
+      <div className="medical-history-content">
+        <p><strong>Diagnostic:</strong> {record.diagnosis}</p>
+        <p><strong>Observații:</strong> {record.notes}</p>
+      </div>
+
+      {record.Prescription && (
+        <div className="prescriptions-section">
+          <div className="prescriptions-list">
+            <div className="prescription-card">
+              <div className="prescription-meds">
+                <strong>Medicamente:</strong>
+                {medicamente.length > 0 ? (
+                  <ul className="meds-list">
+                    {medicamente.map((med, index) => (
+                      <li key={index}>{med}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span> Nespecificat</span>
+                )}
+              </div>
+              
+              <div className="prescription-instructions">
+                <p><strong>Instrucțiuni:</strong> {instructiuni}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {userRole === "doctor" && (
         <button className="small-btn" onClick={() => onAddPrescription(record.id)}>

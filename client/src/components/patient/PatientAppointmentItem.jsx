@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CancelAppointmentModal, ErrorModal, SuccessModal } from "@components";
 import { AppointmentService } from "@services";
 
@@ -26,7 +26,6 @@ const PatientAppointmentItem = ({ appointment, onCancel }) => {
       setShowCancelModal(false);
       setShowSuccessModal(true);
       
-      // Call onCancel to refresh the appointment list
       onCancel(); 
     } catch (error) { 
       setShowCancelModal(false);
@@ -60,7 +59,7 @@ const PatientAppointmentItem = ({ appointment, onCancel }) => {
       <p><strong>Doctor:</strong> Dr. {appointment.Doctors_Datum?.first_name} {appointment.Doctors_Datum?.last_name}</p>
       <p><strong>Data:</strong> {appointment.date}</p>
       <p><strong>Ora:</strong> {appointment.start_time.slice(0, 5)} - {appointment.end_time.slice(0, 5)}</p>
-      <p><strong>Status:</strong> <span className={`status ${appointment.status}`}>{appointment.status}</span></p>
+      <p><strong>Status:</strong> <span className={`status-badge status-${appointment.status}`}>{appointment.status}</span></p>
       
       {appointment.status === 'confirmed' && (
         <button 

@@ -1,6 +1,5 @@
-import { jsPDF } from "jspdf";
-import "@styles/components/PrescriptionCard.css";
 import { Download, FileText, Calendar, User, Pill } from "lucide-react";
+import jsPDF from "jspdf"; 
 
 const PatientPrescriptionCard = ({ prescription, content, createdAt, appointmentDate }) => {
   let parsed;
@@ -27,7 +26,7 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, appointment
       ? `${pacient.first_name} ${pacient.last_name}`
       : "Necunoscut";
 
-  const address = pacient?.address || "Nespecificată";
+  const address = pacient?.address || "Nespecificat";
   const cnp = pacient?.CNP || "Nespecificat";
   const idPrescripiton = prescription?.id || "N/A";
 
@@ -39,34 +38,44 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, appointment
 
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
-    pdf.setFont("courier", "normal");
+    
+    pdf.setFont("helvetica", "normal");
     pdf.setFontSize(12);
 
     const lineHeight = 8;
     let y = 20;
 
+    pdf.setFontSize(16);
+    pdf.setFont("helvetica", "bold");
     pdf.text("Clinica MedAria", 105, y, { align: "center" });
     y += lineHeight;
-    pdf.text("Șoseaua Pavel D. Kiseleff 2, Sector 1, București", 105, y, { align: "center" });
+    
+    pdf.setFontSize(10);
+    pdf.setFont("helvetica", "normal");
+    pdf.text("Soseaua Pavel D. Kiseleff 2, Sector 1, Bucuresti", 105, y, { align: "center" });
     y += lineHeight;
     pdf.text("Tel: (+40) 740 123 456", 105, y, { align: "center" });
     y += lineHeight * 2;
 
-    pdf.text(`Nume și prenume: ${pacientName}`, 10, y);
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Nume: ${pacientName}`, 10, y);
     y += lineHeight;
     pdf.text(`CNP: ${cnp}`, 10, y);
     y += lineHeight;
-    pdf.text(`Adresă: ${address}`, 10, y);
+    pdf.text(`Adresa: ${address}`, 10, y);
     y += lineHeight;
-    pdf.text(`Nr. fișă: ${idPrescripiton}`, 10, y);
+    pdf.text(`Nr.: ${idPrescripiton}`, 10, y);
     y += lineHeight;
 
     pdf.text(`Diagnostic: ${prescription?.Medical_History?.diagnosis || "Nespecificat"}`, 10, y);
     y += lineHeight * 2;
 
+    pdf.setFont("helvetica", "bold");
     pdf.text("Rp./", 10, y);
     y += lineHeight;
 
+    pdf.setFont("helvetica", "normal");
     const medList = medicamente.split(", ");
     medList.forEach(med => {
       pdf.text(`• ${med}`, 15, y);
@@ -74,12 +83,16 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, appointment
     });
 
     y += lineHeight;
-    pdf.text(`Instrucțiuni: ${instructiuni}`, 10, y);
+    pdf.text(`Instructiuni: ${instructiuni}`, 10, y);
     y += lineHeight * 3;
 
-    pdf.text("Semnătura și parafa medicului", 150, y);
-    y += lineHeight * 2;
+    pdf.text("Semnatura si parafa medicului", 150, y);
+    y += lineHeight;
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`Dr. ${doctorName}`, 150, y);
+    y += lineHeight;
 
+    pdf.setFont("helvetica", "normal");
     pdf.text(`Data: ${new Date(createdAt).toLocaleDateString("ro-RO")}`, 10, y);
 
     const fileName = `reteta-${new Date(createdAt).toLocaleDateString("ro-RO").replace(/\./g, '-')}.pdf`;
@@ -92,7 +105,7 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, appointment
         <div className="prescription-icon">
           <FileText size={32} />
         </div>
-        <h3>Rețetă Medicală</h3>
+        <h3>Reteta Medicala</h3>
       </div>
 
       <div className="prescription-info">
@@ -108,7 +121,7 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, appointment
           {appointmentDate && (
             <div className="info-item">
               <Calendar size={18} />
-              <span><strong>Data programării:</strong> {new Date(appointmentDate).toLocaleDateString("ro-RO")}</span>
+              <span><strong>Data programarii:</strong> {new Date(appointmentDate).toLocaleDateString("ro-RO")}</span>
             </div>
           )}
         </div>
@@ -129,7 +142,7 @@ const PatientPrescriptionCard = ({ prescription, content, createdAt, appointment
         </div>
 
         <div className="instructions-section">
-          <span><strong>Instrucțiuni:</strong></span>
+          <span><strong>Instructiuni:</strong></span>
           <div className="instructions-text">
             {instructiuni}
           </div>

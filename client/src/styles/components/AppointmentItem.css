@@ -1,5 +1,6 @@
 .appointment-item,
-.appointment-card {
+.appointment-card,
+.appointment-detail-card {
   background-color: #fff;
   border-radius: 10px;
   padding: 1.5rem;
@@ -30,11 +31,13 @@
 }
 
 .status-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
   font-weight: bold;
+  font-size: 0.85rem;
   display: inline-block;
   text-transform: capitalize;
+  margin-left: 0.5rem;
 }
 
 .status-confirmed {
@@ -43,13 +46,13 @@
 }
 
 .status-cancelled {
-  background-color: #c0392b;
+  background-color: #e74c3c;
   color: white;
 }
 
 .status-pending {
   background-color: #f1c40f;
-  color: black;
+  color: #2c3e50;
 }
 
 .cancel-btn {
