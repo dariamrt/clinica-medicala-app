@@ -120,7 +120,6 @@ const getDoctorAppointments = async (req, res) => {
 
         res.status(200).json(appointments);
     } catch (error) {
-        // console.error("Error fetching doctor's appointments:", error);
         res.status(500).json({ message: "Error fetching doctor's appointments!" });
     }
 };
@@ -156,7 +155,10 @@ const getAvailabilitiesForCurrentDoctor = async (req, res) => {
     const doctorId = req.user.id;
 
     const availabilities = await Availability.findAll({
-      where: { doctor_id: doctorId },
+      where: { 
+        doctor_id: doctorId,
+        appointment_id: null 
+      },
       attributes: ["id", "date", "start_time", "end_time", "createdAt"],
       order: [["date", "ASC"], ["start_time", "ASC"]],
     });

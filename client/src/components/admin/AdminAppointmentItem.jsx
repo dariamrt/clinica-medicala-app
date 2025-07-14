@@ -35,18 +35,27 @@ const AdminAppointmentItem = ({ appointment, onRefresh }) => {
   return (
     <>
       <div className="appointment-card">
-        <p><strong>Pacient:</strong> <Link to={`/admin/patient/${appointment.patient_id}`}>{patientName}</Link> ({patientEmail})</p>
-        <p><strong>Doctor:</strong> {doctorName} ({doctorEmail})</p>
-        <p><strong>Dată:</strong> {appointment.date}</p>
-        <p><strong>Oră:</strong> {appointment.start_time?.slice(0, 5)} - {appointment.end_time?.slice(0, 5)}</p>
-
-        <p>
-          <strong>Status:</strong>{" "}
-          <span className={`status-badge status-${appointment.status}`}>
-            {appointment.status}
-          </span>
-        </p>
-
+        <div className="appointment-info">
+          <span className="appointment-label">Pacient:</span>
+          <span><Link to={`/admin/patient/${appointment.patient_id}`}>{patientName}</Link> ({patientEmail})</span>
+        </div>
+        <div className="appointment-info">
+          <span className="appointment-label">Doctor:</span>
+          <span>{doctorName} ({doctorEmail})</span>
+        </div>
+        <div className="appointment-info">
+          <span className="appointment-label">Dată:</span>
+          <span>{appointment.date}</span>
+        </div>
+        <div className="appointment-info">
+          <span className="appointment-label">Interval:</span>
+          <span>{appointment.start_time?.slice(0, 5)} - {appointment.end_time?.slice(0, 5)}</span>
+        </div>
+        <div className="appointment-info">
+          <span className="appointment-label">Status:</span>
+          <span className={`status-badge status-${appointment.status}`}>{appointment.status}</span>
+        </div>
+        
         <div className="appointment-actions">
           <button className="action-btn edit" onClick={() => setEditOpen(true)}>Editează</button>
           <button className="action-btn cancel" onClick={handleCancel}>Anulează</button>

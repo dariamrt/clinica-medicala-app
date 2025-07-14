@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DoctorService } from "@services";
 import { ArrowLeft } from "lucide-react";
+import { AppointmentItem } from "@components";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "@styles/pages/Appointments.css";
@@ -30,6 +31,18 @@ const DoctorSchedule = () => {
     fetchData();
   }, []);
 
+
+  const hasConfirmedAppointment = (availability) => {
+    if (!availability.appointment_id) return false;
+    
+    const appointment = appointments.find(apt => apt.id === availability.appointment_id);
+    return appointment && appointment.status === 'confirmed';
+  };
+
+  const filteredAvailabilities = availabilities.filter(availability => 
+    !hasConfirmedAppointment(availability)
+  );
+
   const getTileClassName = ({ date }) => {
     const formattedDate = date.toISOString().split('T')[0];
     
@@ -37,7 +50,7 @@ const DoctorSchedule = () => {
       appointment.date === formattedDate
     );
     
-    const hasAvailability = availabilities.some(availability => 
+    const hasAvailability = filteredAvailabilities.some(availability => 
       availability.date === formattedDate
     );
     
@@ -61,12 +74,25 @@ const DoctorSchedule = () => {
     appointment.date === selectedDate.toISOString().split('T')[0]
   );
 
-  const availabilitiesOnSelectedDate = availabilities.filter(availability => 
+  const availabilitiesOnSelectedDate = filteredAvailabilities.filter(availability => 
     availability.date === selectedDate.toISOString().split('T')[0]
   );
 
   const handleItemClick = (item, type) => {
     setSelectedItem({ ...item, type });
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'confirmed':
+        return 'status-confirmed';
+      case 'pending':
+        return 'status-pending';
+      case 'canceled':
+        return 'status-canceled';
+      default:
+        return '';
+    }
   };
 
   return (
@@ -89,44 +115,47 @@ const DoctorSchedule = () => {
               {appointmentsOnSelectedDate.length === 0 ? (
                 <p className="no-appointments">Nu există programări pentru această zi.</p>
               ) : (
-                <ul className="appointment-list">
+                <div className="appointment-list">
                   {appointmentsOnSelectedDate.map((appointment) => (
-                    <li 
+                    <div 
                       key={`appointment-${appointment.id}`} 
-                      className={`appointment-list-item ${selectedItem && selectedItem.id === appointment.id && selectedItem.type === 'appointment' ? 'selected' : ''}`}
+                      className={`appointment-list-item ${getStatusClass(appointment.status)} ${selectedItem && selectedItem.id === appointment.id && selectedItem.type === 'appointment' ? 'selected' : ''}`}
                       onClick={() => handleItemClick(appointment, 'appointment')}
                     >
-                      <span className="appointment-time">
+                      <div className="appointment-time" style={{ color: '#000' }}>
                         {appointment.start_time.slice(0, 5)} - {appointment.end_time.slice(0, 5)}
-                      </span>
-                      <span className="appointment-doctor">
+                      </div>
+                      <div className="appointment-doctor">
                         {appointment.Patients_Datum?.first_name} {appointment.Patients_Datum?.last_name}
-                      </span>
-                    </li>
+                      </div>
+                      <div className={`appointment-status ${appointment.status}`} style={{ color: '#000' }}>
+                        {appointment.status}
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
               
               <h3 style={{ marginTop: "20px" }}>Disponibilități pe {selectedDate.toLocaleDateString('ro-RO')}</h3>
               {availabilitiesOnSelectedDate.length === 0 ? (
                 <p className="no-appointments">Nu există disponibilități pentru această zi.</p>
               ) : (
-                <ul className="appointment-list">
+                <div className="appointment-list">
                   {availabilitiesOnSelectedDate.map((availability) => (
-                    <li 
+                    <div 
                       key={`availability-${availability.id}`} 
                       className={`appointment-list-item availability-item ${selectedItem && selectedItem.id === availability.id && selectedItem.type === 'availability' ? 'selected' : ''}`}
                       onClick={() => handleItemClick(availability, 'availability')}
                     >
-                      <span className="appointment-time">
+                      <div className="appointment-time">
                         {availability.start_time.slice(0, 5)} - {availability.end_time.slice(0, 5)}
-                      </span>
-                      <span className="appointment-doctor">
+                      </div>
+                      <div className="appointment-doctor">
                         Disponibil
-                      </span>
-                    </li>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </div>
@@ -136,16 +165,15 @@ const DoctorSchedule = () => {
               <div className="appointment-detail-card">
                 <h3>{selectedItem.type === 'appointment' ? 'Detalii programare' : 'Detalii disponibilitate'}</h3>
                 
-                {selectedItem.type === 'appointment' && (
-                  <>
-                    <p><strong>Pacient:</strong> {selectedItem.Patients_Datum?.first_name} {selectedItem.Patients_Datum?.last_name}</p>
-                    <p><strong>Email:</strong> {selectedItem.Patients_Datum?.User?.email}</p>
-                    <p><strong>Status:</strong> <span className={`status ${selectedItem.status}`}>{selectedItem.status}</span></p>
-                  </>
+                {selectedItem.type === 'appointment' ? (
+                  <AppointmentItem appointment={selectedItem} />
+                ) : (
+                  <div>
+                    <p><strong>Data:</strong> {selectedItem.date}</p>
+                    <p><strong>Interval orar:</strong> {selectedItem.start_time} - {selectedItem.end_time}</p>
+                    <p><strong>Status:</strong> Disponibil</p>
+                  </div>
                 )}
-                
-                <p><strong>Data:</strong> {selectedItem.date}</p>
-                <p><strong>Interval orar:</strong> {selectedItem.start_time} - {selectedItem.end_time}</p>
               </div>
             ) : (
               <div className="appointment-details-placeholder">

@@ -40,20 +40,21 @@
   margin-left: 0.5rem;
 }
 
-.status-confirmed {
+.status-confirmed, .status-badge.status-confirmed {
   background-color: #27ae60;
   color: white;
 }
 
-.status-cancelled {
+.status-cancelled, .status-badge.status-cancelled  {
   background-color: #e74c3c;
   color: white;
 }
 
-.status-pending {
+.status-pending, .status-badge.status-pending  {
   background-color: #f1c40f;
   color: #2c3e50;
 }
+
 
 .cancel-btn {
   align-self: flex-start;

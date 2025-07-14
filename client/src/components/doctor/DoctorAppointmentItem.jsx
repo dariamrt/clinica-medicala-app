@@ -22,7 +22,7 @@ const DoctorAppointmentItem = ({ appointment }) => {
       </div>
       <div className="appointment-info">
         <span className="appointment-label">Status:</span>
-        <span className={`appointment-status ${appointment.status}`}>{appointment.status}</span>
+        <span className={`status-badge status-${appointment.status}`}>{appointment.status}</span>
       </div>
     </div>
   );
