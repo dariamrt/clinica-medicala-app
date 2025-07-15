@@ -76,10 +76,12 @@
   overflow-y: auto;
   display: flex;
   justify-content: center;
+  margin-left: 1rem;
 }
 
 .report-content > div {
   width: 100%;
+  margin-left: 2rem;
 }
 
 .placeholder-text {

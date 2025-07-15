@@ -187,7 +187,6 @@ const getAppointmentCancellationRate = async (req, res) => {
     }
 };
 
-
 // Peak hours for appts
 const getPeakAppointmentHours = async (req, res) => {
     try {
