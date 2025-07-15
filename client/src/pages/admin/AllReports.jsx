@@ -9,12 +9,33 @@ import "@styles/components/ReportCard.css";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#8dd1e1", "#d0ed57", "#a4de6c", "#d88884"];
 
-const CancellationRateView = ({ data }) => (
-  <div className="report-box">
-    <h3>Rata de anulare a programărilor</h3>
-    <p><strong>{data.rate}</strong> din programări au fost anulate.</p>
-  </div>
-);
+const CancellationRateView = ({ data }) => {
+  const overview = data.overview || data;
+  
+  return (
+    <div className="report-box">
+      <h3>Raport Rata Anulare Programări</h3>
+      
+      {overview.totalAppointments ? (
+        <div className="report-content">
+          <p>Total programări: {overview.totalAppointments}</p>
+          <p>Anulate: {overview.canceledAppointments}</p>
+          <p>No-show: {overview.noShowAppointments}</p>
+          <p>Finalizate: {overview.completedAppointments}</p>
+          <p>Rata anulare: {overview.cancellationRate}%</p>
+          <p>Rata no-show: {overview.noShowRate}%</p>
+          <p>Rata finalizare: {overview.completionRate}%</p>
+        </div>
+      ) : overview.rate ? (
+        <p><strong>{overview.rate}</strong> din programări au fost anulate.</p>
+      ) : (
+        <div className="report-content">
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const PeakHoursView = ({ data }) => (
   <div className="report-box">
@@ -68,35 +89,100 @@ const CommonDiagnosesView = ({ data }) => (
   </div>
 );
 
-const DoctorPerformanceView = ({ data }) => (
-  <div className="report-box">
-    <h3>Performanța doctorilor</h3>
-    {data.performance && data.performance.length > 0 ? (
-      <div className="scroll-table-wrapper">
-        <table className="report-table styled-table">
-          <thead>
-            <tr>
-              <th>Doctor</th>
-              <th>Număr programări</th>
-              <th>Status programări</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.performance.map((doc, idx) => (
-              <tr key={idx}>
-                <td>{doc.first_name} {doc.last_name}</td>
-                <td>{doc.total_appointments}</td>
-                <td>{doc.appointment_status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ) : (
-      <p>Nu există date disponibile.</p>
-    )}
-  </div>
-);
+const DoctorPerformanceView = ({ data }) => {
+  const getPerformanceTierColor = (tier) => {
+    const colors = {
+      'Excelent': '#4CAF50',
+      'Bun': '#8BC34A', 
+      'Mediu': '#FF9800',
+      'Sub medie': '#FF5722',
+      'Necesita imbunatatire': '#F44336'
+    };
+    return colors[tier] || '#9E9E9E';
+  };
+
+  const performanceData = data.performance || data.doctorPerformanceReport || [];
+  const totalDoctors = data.totalDoctors || 0;
+  const averageScore = data.averageScore || 0;
+  const period = data.period || '3months';
+
+  return (
+    <div className="report-box">
+      <h3>Performanța doctorilor</h3>
+      
+      {performanceData.length === 0 ? (
+        <p>Nu există date disponibile.</p>
+      ) : (
+        <>
+          <div className="report-summary">
+            <div className="summary-stats">
+              <div className="stat-item">
+                <span className="stat-label">Total doctori:</span>
+                <span className="stat-value">{totalDoctors}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Scor mediu:</span>
+                <span className="stat-value">{averageScore}%</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Perioada:</span>
+                <span className="stat-value">{period === '3months' ? 'Ultimele 3 luni' : period}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="scroll-table-wrapper">
+            <table className="report-table styled-table">
+              <thead>
+                <tr>
+                  <th>Rang</th>
+                  <th>Doctor</th>
+                  <th>Specialitate</th>
+                  <th>Total programări</th>
+                  <th>Completate</th>
+                  <th>Anulate</th>
+                  <th>Rată completare</th>
+                  <th>Rată utilizare</th>
+                  <th>Scor performanță</th>
+                  <th>Nivel</th>
+                </tr>
+              </thead>
+              <tbody>
+                {performanceData.map((doc, idx) => (
+                  <tr key={idx}>
+                    <td>#{doc.ranking || (idx + 1)}</td>
+                    <td>{doc.first_name} {doc.last_name}</td>
+                    <td>{doc.specialty?.name || 'N/A'}</td>
+                    <td>{doc.total_appointments || 0}</td>
+                    <td>{doc.completed_appointments || 0}</td>
+                    <td>{doc.cancelled_appointments || 0}</td>
+                    <td>{doc.completion_rate || 0}%</td>
+                    <td>{doc.utilization_rate || 0}%</td>
+                    <td>{doc.performance_score || 0}%</td>
+                    <td>
+                      <span 
+                        className="performance-tier-badge"
+                        style={{
+                          backgroundColor: getPerformanceTierColor(doc.performance_tier),
+                          color: 'white',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '12px'
+                        }}
+                      >
+                        {doc.performance_tier || 'N/A'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 const PredictNoShowView = ({ data }) => (
   <div className="report-box">

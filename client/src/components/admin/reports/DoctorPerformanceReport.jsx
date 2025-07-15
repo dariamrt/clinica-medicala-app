@@ -35,7 +35,7 @@ const DoctorPerformanceReport = () => {
       await ReportService.saveReport({
         report_type: "doctor_performance",
         content: { 
-          performance: reportData,
+          doctorPerformanceReport: reportData, 
           totalDoctors,
           averageScore,
           period
@@ -155,31 +155,6 @@ const DoctorPerformanceReport = () => {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          <div className="detailed-metrics">
-            <h4>Metrici detaliate</h4>
-            <div className="metrics-grid">
-              {reportData.slice(0, 5).map((doc, idx) => (
-                <div key={idx} className="metric-card">
-                  <h5>{doc.first_name} {doc.last_name}</h5>
-                  <div className="metric-details">
-                    <div className="metric-row">
-                      <span>Pacienți unici:</span>
-                      <span>{doc.unique_patients}</span>
-                    </div>
-                    <div className="metric-row">
-                      <span>Rată retenție pacienți:</span>
-                      <span>{doc.patient_retention_rate}%</span>
-                    </div>
-                    <div className="metric-row">
-                      <span>Rată anulări:</span>
-                      <span>{doc.cancellation_rate}%</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="report-actions">

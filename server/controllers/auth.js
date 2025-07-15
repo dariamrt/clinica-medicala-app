@@ -15,6 +15,10 @@ const registerUser = async (req, res) => {
     try {
         const { email, password, confirmPassword, role, phone_number, CNP, first_name, last_name, gender, address, specialty_id } = req.body;
 
+        if (!email || !password || !confirmPassword || !first_name || !last_name) {
+            return res.status(400).json({ message: "Email, password, first name, and last name are required!" });
+        }
+
         const token = req.cookies.token;
         let userRole = "patient"; 
 
@@ -38,9 +42,10 @@ const registerUser = async (req, res) => {
                 } catch (error) {
                     return res.status(403).json({ message: "Invalid or expired token!" });
                 }
+            } else {
+                return res.status(403).json({ message: "Authentication required!" });
             }
         }
-    
 
         if (!emailRegex.test(email)) {
             return res.status(400).json({ message: "Invalid email format!" });
@@ -67,62 +72,88 @@ const registerUser = async (req, res) => {
                 return res.status(400).json({ message: "CNP must contain exactly 13 digits!" });
             }
 
+            if (!gender || !["male", "female"].includes(gender)) {
+                return res.status(400).json({ message: "Gender must be M or F!" });
+            }
+
             const existingCNP = await Patient.findOne({ where: { CNP } });
             if (existingCNP) {
                 return res.status(400).json({ message: "CNP is already in use!" });
             }
         }
 
-        if (role === "doctor" && (!specialty_id || !first_name || !last_name || !phone_number)) {
-            return res.status(400).json({ message: "Invalid doctor data!" });
+        if (userRole === "doctor") {
+            if (!specialty_id) {
+                return res.status(400).json({ message: "Specialty is required for doctors!" });
+            }
+            
+            const specialty = await Specialty.findByPk(specialty_id);
+            if (!specialty) {
+                return res.status(400).json({ message: "Invalid specialty selected!" });
+            }
         }
-        
-        if (role === "patient" && (!CNP || !gender || !address || !first_name || !last_name || !phone_number)) {
-            return res.status(400).json({ message: "Invalid patient data!" });
-        }
-        
+
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Email is already in use!" });
         }
 
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-        const newUser = await User.create({ email, password: hashedPassword, role: userRole });
+        const newUser = await User.create({ 
+            email, 
+            password: hashedPassword, 
+            role: userRole 
+        });
 
         if (userRole === "doctor") {
-            if (!specialty_id) {
-                return res.status(400).json({ message: "Specialty is required for doctors!" });
-            }
             await Doctor.create({
                 user_id: newUser.id,
-                first_name,
-                last_name,
-                phone_number,
-                specialty_id,
+                first_name: first_name.trim(),
+                last_name: last_name.trim(),
+                phone_number: phone_number || null,
+                specialty_id: specialty_id,
             });
         } else if (userRole === "patient") {
-            if (!gender || !address) {
-                return res.status(400).json({ message: "Gender and address are required for patients!" });
-            }
-
             await Patient.create({
                 user_id: newUser.id,
-                first_name,
-                last_name,
-                CNP,
-                gender,
-                phone_number,
-                address,
+                first_name: first_name.trim(),
+                last_name: last_name.trim(),
+                CNP: CNP,
+                gender: gender,
+                phone_number: phone_number || null,
+                address: address || null,
             });
         }
 
         const userWithoutPassword = { ...newUser.toJSON() }; 
         delete userWithoutPassword.password; 
         
-        res.status(201).json({ message: "User registered successfully!", user: userWithoutPassword });
+        res.status(201).json({ 
+            message: "User registered successfully!", 
+            user: userWithoutPassword 
+        });
+        
     } catch (error) {
         console.error("Error registering user:", error);
-        res.status(500).json({ message: "Error registering user!" });
+        
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ 
+                message: "Validation error!", 
+                errors: error.errors.map(e => e.message) 
+            });
+        }
+        
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ 
+                message: "Duplicate data error!", 
+                field: error.errors[0]?.path 
+            });
+        }
+        
+        res.status(500).json({ 
+            message: "Error registering user!", 
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined 
+        });
     }
 };
 

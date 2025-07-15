@@ -87,7 +87,7 @@ const deleteReport = async (req, res) => {
     }
 };
 
-// Appointment Cancellation Rate Report
+// appt cancellation rate 
 const getAppointmentCancellationRate = async (req, res) => {
     try {
         const { period = '3months', doctor_id, specialty_id } = req.query;
@@ -125,8 +125,39 @@ const getAppointmentCancellationRate = async (req, res) => {
 
         const totalAppointments = await Appointment.count({ where });
         const canceledAppointments = await Appointment.count({ where: { ...where, status: "cancelled" } });
-        const noShowAppointments = await Appointment.count({ where: { ...where, status: "no_show" } });
-        const completedAppointments = await Appointment.count({ where: { ...where, status: "completed" } });
+        
+        const noShowAppointments = await Appointment.count({ 
+            where: { 
+                ...where, 
+                status: {
+                    [Sequelize.Op.in]: ["no_show", "cancelled"]
+                }
+            } 
+        });
+        
+        const currentDateTime = new Date();
+        const completedAppointments = await Appointment.count({ 
+            where: { 
+                ...where, 
+                [Sequelize.Op.or]: [
+                    { status: "completed" },
+                    {
+                        status: "confirmed",
+                        [Sequelize.Op.and]: [
+                            Sequelize.where(
+                                Sequelize.fn('TIMESTAMP', 
+                                    Sequelize.col('date'), 
+                                    Sequelize.col('end_time')
+                                ),
+                                {
+                                    [Sequelize.Op.lt]: currentDateTime
+                                }
+                            )
+                        ]
+                    }
+                ]
+            } 
+        });
 
         const cancellationRate = totalAppointments === 0 ? 0 : (canceledAppointments / totalAppointments) * 100;
         const noShowRate = totalAppointments === 0 ? 0 : (noShowAppointments / totalAppointments) * 100;
@@ -157,7 +188,7 @@ const getAppointmentCancellationRate = async (req, res) => {
 };
 
 
-// Peak Hours for Appointments
+// Peak hours for appts
 const getPeakAppointmentHours = async (req, res) => {
     try {
         const { includeByDay } = req.query;
@@ -289,7 +320,7 @@ const getPeakAppointmentHoursByDay = async (req, res) => {
     }
 };
 
-// Most Common Diagnoses 
+// Most common diagnoses 
 const getCommonDiagnoses = async (req, res) => {
     try {
         const diagnosesData = await MedicalHistory.findAll({
@@ -319,7 +350,7 @@ const getCommonDiagnoses = async (req, res) => {
     }
 };
 
-// Doctor Performance Report
+// Dr performance 
 const getDoctorPerformanceReport = async (req, res) => {
     try {
         const { period = '3months' } = req.query;
@@ -359,7 +390,7 @@ const getDoctorPerformanceReport = async (req, res) => {
                         }
                     },
                     required: false,
-                    attributes: ['id', 'status', 'date', 'patient_id']
+                    attributes: ['id', 'status', 'date', 'patient_id', 'end_time']
                 },
                 {
                     model: Specialty,
@@ -369,14 +400,27 @@ const getDoctorPerformanceReport = async (req, res) => {
             raw: false
         });
 
+        const currentDateTime = new Date();
+
         const performanceReport = await Promise.all(
             doctorPerformanceData.map(async (doctor) => {
                 const appointments = doctor.Appointments || [];
                 
                 const totalAppointments = appointments.length;
-                const completedAppointments = appointments.filter(apt => apt.status === 'completed').length;
                 const cancelledAppointments = appointments.filter(apt => apt.status === 'cancelled').length;
-                const noShowAppointments = appointments.filter(apt => apt.status === 'no_show').length;
+                
+                const completedAppointments = appointments.filter(apt => {
+                    if (apt.status === 'completed') return true;
+                    if (apt.status === 'confirmed') {
+                        const appointmentEndTime = new Date(apt.date + 'T' + apt.end_time);
+                        return appointmentEndTime < currentDateTime;
+                    }
+                    return false;
+                }).length;
+
+                const noShowAppointments = appointments.filter(apt => 
+                    apt.status === 'no_show' || apt.status === 'cancelled'
+                ).length;
 
                 const completionRate = totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
                 const cancellationRate = totalAppointments > 0 ? (cancelledAppointments / totalAppointments) * 100 : 0;

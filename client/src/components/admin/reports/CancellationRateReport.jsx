@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as ReportService from "@services/ReportService";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import "@styles/components/CancellationRateReport.css";
 
 const CancellationRateReport = () => {
     const [reportData, setReportData] = useState(null);

@@ -84,6 +84,12 @@ function randomPastDate(maxDaysBack = 180) {
   return date.toISOString().split('T')[0];
 }
 
+function randomPastDateInLast6Months() {
+  const date = new Date();
+  date.setDate(date.getDate() - Math.floor(Math.random() * 180));
+  return date.toISOString().split('T')[0];
+}
+
 function generatePhoneNumber() {
   return `07${Math.floor(10000000 + Math.random() * 89999999)}`;
 }
@@ -290,6 +296,51 @@ function generatePrescriptionContent() {
         start_time,
         end_time,
         status: 'confirmed',
+        reimbursed_by_CAS: Math.random() < 0.5
+      });
+
+      const availability = await Availability.create({
+        id: uuidv4(),
+        doctor_id: doctor.doctor.user_id,
+        date,
+        start_time,
+        end_time,
+        appointment_id: appointmentId
+      });
+
+      appointments.push(appointment);
+      appointmentCount++;
+    }
+  }
+
+  for (let i = 0; i < 150; i++) {
+    const patient = getRandomItem(patients);
+    const doctor = getRandomItem(doctors);
+    
+    let date, start_time, end_time, key;
+    let attempts = 0;
+    
+    do {
+      date = randomPastDateInLast6Months();
+      [start_time, end_time] = randomTimeSlot();
+      key = `${doctor.doctor.user_id}-${date}-${start_time}-${end_time}`;
+      attempts++;
+      if (attempts > 100) break;
+    } while (usedSlots.has(key));
+    
+    if (attempts <= 100) {
+      usedSlots.add(key);
+      
+      const appointmentId = uuidv4();
+      const status = Math.random() < 0.8 ? 'confirmed' : 'cancelled';
+      const appointment = await Appointment.create({
+        id: appointmentId,
+        patient_id: patient.patient.user_id,
+        doctor_id: doctor.doctor.user_id,
+        date,
+        start_time,
+        end_time,
+        status,
         reimbursed_by_CAS: Math.random() < 0.5
       });
 
